@@ -1,8 +1,11 @@
 package game
 
 import game.Ingredient.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Recipe (val name: String, val ingredients: List<Ingredient>) {
+
     // Låter oss skapa recept genom att skriva alla ingredienser i följd vid invocation
     constructor(name: String, vararg ingredients: Ingredient) : this(name, ingredients.asList())
     val value: Int get() = ingredients.size
