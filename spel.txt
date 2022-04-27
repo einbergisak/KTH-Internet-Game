@@ -86,11 +86,9 @@ Kodimplementation:
 		FOODBOX_SIZE = 50
 		TABLE: Rect = (400, MIN_Y) to (600, MAX_Y)
 
-	Direction: Enum
-		LEFT, UP, DOWN, RIGHT
 
 	Command: Enum
-		MOVE(Direction), INTERACT_WITH_FOOD_BOX
+		LEFT, UP, DOWN, RIGHT, INTERACT_WITH_FOOD_BOX
 
 
 	commands:
