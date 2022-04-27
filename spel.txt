@@ -22,7 +22,7 @@ Recept/Ingredienser:
 
 Kodimplementation:
 
-	typealias Pos = Pair<int, int>
+	data class Pos(x, y)
 
 	typealias Rect = Pair<Pos, Pos>
 
@@ -39,6 +39,7 @@ Kodimplementation:
 
 
 	Recipe:
+		name: String
 		ingredients: [Ingredient]
 		value: Int = ingredients.length
 
@@ -123,6 +124,6 @@ Protokoll:
 
 	Server väntar på anslutning av två connections.
 	Ger första anslutningen id 0 (left) och den andra id 1 (right)
-	Inledningsvis skickas gameWalls.
+	Inledningsvis skickas gameLevel.
 	Under spelets gång genereras och skickas SendState till varje spelare varje tick.
 	Varje tick tar servern också emot kommandon av spelare.

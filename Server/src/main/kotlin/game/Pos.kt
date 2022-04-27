@@ -1,3 +1,3 @@
 package game
 
-typealias Pos = Pair<Int, Int>
+data class Pos (var x: Int, var y: Int)
