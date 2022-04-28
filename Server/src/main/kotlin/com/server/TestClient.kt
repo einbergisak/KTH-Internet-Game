@@ -17,15 +17,24 @@ object TestClient {
             val read = socket.openReadChannel()
             val write = socket.openWriteChannel(autoFlush = true)
 
-            launch(Dispatchers.IO) {
-                val line = read.readUTF8Line()
-                println("server: $line")
+            val b = launch(Dispatchers.IO){
+                while(true){
+                    val line = read.readUTF8Line()
+                    println("server: $line")
+                }
             }
 
-            for (line in System.`in`.lines()) {
-                println("client: $line")
-                write.writeStringUtf8("$line\n")
+            val c = launch(Dispatchers.IO){
+                for (line in System.`in`.lines()) {
+                    println("client: $line")
+                    write.writeStringUtf8("$line\n")
+                }
             }
+
+            println("hello")
+            b.join()
+            c.join()
+
         }
     }
 
