@@ -2,13 +2,28 @@ package game
 
 import kotlinx.serialization.Serializable
 
-/// Pantry är där ingredienserna finns att hämta, Main är där man placerar de inför "tillagning"
-enum class TableType{
-    Pantry, Main
+
+@Serializable
+data class Table(val foodBoxes: List<FoodBox> = emptyList(), override val bounds: Rect) : Bounded {
+    fun clearIngredients(){
+        foodBoxes.forEach { it.containedIngredient = null }
+    }
 }
 
 @Serializable
-data class Table(val type: TableType, val foodBoxes: List<FoodBox>): Bounded{
-    override val bounds: Rect
-        get() = Rect(TABLE_POS, Pos(TABLE_POS.x-1, TABLE_POS.y-1))
+data class Tables(val left: Table, val right: Table, val main: Table) {
+    fun clearAll() {
+        left.clearIngredients()
+        right.clearIngredients()
+        main.clearIngredients()
+    }
+
+    fun getAll(): List<Table> = listOf(left, right, main)
+
+    companion object{ fun default(): Tables{
+        val main = Table(bounds=Rect(MAIN_TABLE_POS, Pos(MAIN_TABLE_POS.x+MAIN_TABLE_WIDTH, MAIN_TABLE_POS.y+MAIN_TABLE_HEIGHT)))
+        val left = Table(bounds=Rect(LEFT_TABLE_POS, Pos(LEFT_TABLE_POS.x+SIDE_TABLE_WIDTH, LEFT_TABLE_POS.y+SIDE_TABLE_HEIGHT)))
+        val right = Table(bounds=Rect(RIGHT_TABLE_POS, Pos(RIGHT_TABLE_POS.x+SIDE_TABLE_WIDTH, RIGHT_TABLE_POS.y+ SIDE_TABLE_HEIGHT)))
+        return Tables(left, right, main)
+    }}
 }
