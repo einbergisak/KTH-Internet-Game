@@ -1,0 +1,37 @@
+
+
+Varje packet skickas som
+{"type":Command, "data":String}
+
+
+update():
+    PRE_GAME ->
+        Lyssna på inkommande CONNECTION_REQUEST med NAME-package. När spelare accepteras får de CONNECTION_ACCEPTED och ett ID beroende på vilken av spelarna den är.
+        När båda är anslutna, starta spelet och övergå till IN_GAME, skicka START_GAME till klienterna.
+
+    IN_GAME ->
+        Se till så att varje spelares timeOfLastpackage.durationSince().asSeconds() > SECONDS_UNTIL_DISCONNECTED. Om inte -> ändra client.status=DISCONNECTED och game.status=PAUSED, och skicka GAME_PAUSED till den andra spelaren.
+
+        Hantera packages från spelare ->
+            MOVE: Kalla move() med direction som anges i packaget.
+            INTERACT_WITH_FOOD_BOX: Kalla Player.interactWithFoodBox()
+            CONNECTION_REQUEST: Svara med CONNECTION_DENIED
+            DISCONNECTED: Övergå till Status.GAME_ABORTED, och meddela den andra spelaren att SendCommand.GAME_ABORTED
+            STALE: Gör inget
+
+            När ett package är mottaget, uppdatera clientens timeOfLastpackage
+
+        Uppdatera gameState.
+
+    GAME_PAUSED ->
+        Broadcasta RECONNECT_REQUEST till den DC:ade klienten. Kolla även så att den andra spelaren fortfarande skickar STALE-kommandon, och uppdatera dess timeOfLastpackage om den är det, annars ändra till GAME_ABORTED och meddela båda spelarna detta.
+
+        Lyssna efter CONNECTION_REQUEST från samma IP och port som den DC:ade spelaren. Om det lyckas, återgå till IN_GAME och meddela spelarna att GAME_RESUMED.
+
+        Om timeOfLastpackage.durationSince().asSeconds() > SECONDS_UNTIL_ABORTED, övergå till GAME_ABORTED och meddela båda spelarna detta.
+
+    GAME_ABORTED ->
+        Avsluta båda anslutningarna, och resetta gameState.
+
+    GAME_OVER ->
+        Meddela båda spelarna att GAME_OVER, avslutar båda anslutningarna, och resettar gameState.

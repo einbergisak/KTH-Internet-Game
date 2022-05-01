@@ -1,5 +1,8 @@
-package game
+package server
 
+import game.GameLevel
+import game.Player
+import game.Recipe
 import kotlinx.serialization.Serializable
 import java.time.Duration
 import java.time.Instant

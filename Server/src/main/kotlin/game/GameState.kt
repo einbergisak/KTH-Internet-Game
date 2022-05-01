@@ -1,9 +1,7 @@
 package game
 
-import kotlinx.serialization.Serializable
-import java.time.Duration
+import server.SendState
 import java.time.Instant
-import java.util.Collections.shuffle
 
 
 class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
@@ -11,8 +9,9 @@ class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
     var remainingRecipes: MutableList<Recipe> = RECIPES.shuffled().toMutableList()
     var currentRecipes: Pair<Recipe, Recipe> = remainingRecipes.removeLast() to remainingRecipes.removeLast()
     var pointsEarned: Int = 0
+    var status = Status.PRE_GAME
 
-    fun createSendState(): SendState{
+    fun createSendState(): SendState {
         return SendState(players, currentRecipes, gameLevel, pointsEarned, gameStartTime)
     }
 
@@ -48,8 +47,8 @@ class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
 
         // Fill remaining FoodBoxes with ingredients that are not in any of the current recipes, in shuffled order
         val shuffledIngredients = Ingredient.values().asList().minus(ing1.union(ing2)).toMutableList().also{it.shuffle()}
-        val emptyBoxesLeft = FOODBOXES_PER_TABLE-zip.size/2
-        val emptyBoxesRight = FOODBOXES_PER_TABLE-(zip.size+1)/2
+        val emptyBoxesLeft = FOODBOXES_PER_TABLE -zip.size/2
+        val emptyBoxesRight = FOODBOXES_PER_TABLE -(zip.size+1)/2
         repeat(emptyBoxesLeft) {
             putOnLeftSide.add(shuffledIngredients.removeFirst())
         }
@@ -63,4 +62,8 @@ class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
 
 
     }
+}
+
+enum class Status {
+    PRE_GAME, IN_GAME, GAME_ABORTED, GAME_OVER, GAME_PAUSED
 }
