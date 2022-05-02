@@ -1,18 +1,22 @@
 package game
 
 import server.SendState
-import java.time.Instant
+import server.Timer
 
 
 class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
-    var gameStartTime: Instant = Instant.now()
+    var gameStartTime: Timer = Timer()
     var remainingRecipes: MutableList<Recipe> = RECIPES.shuffled().toMutableList()
     var currentRecipes: Pair<Recipe, Recipe> = remainingRecipes.removeLast() to remainingRecipes.removeLast()
     var pointsEarned: Int = 0
     var status = Status.PRE_GAME
+    val timeRemaining: Long get() {
+        val rem = GAME_DURATION-gameStartTime.elapsedSeconds
+        return if (rem < 0) 0 else rem
+    }
 
     fun createSendState(): SendState {
-        return SendState(players, currentRecipes, gameLevel, pointsEarned, gameStartTime)
+        return SendState(players, currentRecipes, gameLevel, pointsEarned, timeRemaining)
     }
 
     // Replaces recipes and empties all FoodBoxes, filling them with corresponding ingredients.
@@ -65,5 +69,5 @@ class GameState (val gameLevel: GameLevel, val players: Pair<Player, Player>){
 }
 
 enum class Status {
-    PRE_GAME, IN_GAME, GAME_ABORTED, GAME_OVER, GAME_PAUSED
+    PRE_GAME, IN_GAME, GAME_OVER
 }

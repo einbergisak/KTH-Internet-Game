@@ -1,5 +1,7 @@
 package game
 
+import java.time.Duration
+
 // Values below are configurable to change game settings
 const val MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT = true // Implemented due to uncertainty regarding project criteria
 const val GAME_WIDTH = 1000
@@ -8,7 +10,7 @@ const val PLAYER_VEL = 2
 const val PLAYER_SIZE = 50
 
 
-// values below should not be modified
+// Values below should not be modified
 const val MIN_X = 0
 const val MAX_X = GAME_WIDTH - 1
 const val MIN_Y = 0
@@ -25,3 +27,4 @@ val RIGHT_TABLE_POS = Pos(GAME_WIDTH - SIDE_TABLE_WIDTH, MIN_Y)
 val GAME_BOUNDS = Rect(Pos(MIN_X, MIN_Y), Pos(MAX_X, MAX_Y))
 val PLAYER1_START_POS = Pos(MIN_X + SIDE_TABLE_WIDTH, MAX_Y / 2)
 val PLAYER2_START_POS = Pos(GAME_WIDTH - SIDE_TABLE_WIDTH - PLAYER_SIZE, MAX_Y / 2)
+const val GAME_DURATION /** In seconds */ : Long = 180

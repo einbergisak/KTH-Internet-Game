@@ -123,7 +123,16 @@ Protokoll:
 	I main menu anger man IP till server.
 
 	Server väntar på anslutning av två connections.
-	Ger första anslutningen id 0 (left) och den andra id 1 (right)
+	Ger första anslutningen ID 0 (left) och den andra ID 1 (right)
 	Inledningsvis skickas gameLevel.
 	Under spelets gång genereras och skickas SendState till varje spelare varje tick.
 	Varje tick tar servern också emot kommandon av spelare.
+
+	Spelare har 3 states: DISCONNECTED, CONNECTING, CONNECTED
+	client CONNECTING -> (CONNECTION_ACCEPTED->CONNECTED, CONNECTION_DENIED->DISCONNECTED)
+
+	Spelare försöker ansluta med header CONNECTION_REQUEST.
+	När servern får en CONNECTION_REQUEST svarar den med en CONNECTION_DENIED eller CONNECTION_ACCEPTED, där den senare skickas med ett package innehållande dess ID. Om båda platser är fyllda skickas CONNECTION_DENIED
+
+	Om servern inte får ett package av en client på N sekunder räknas den som DC:ad, och pausar då spelet i N sekunder och inväntar att spelaren (med samma IP+port) ska reconnecta. Efter N sekunder utan reconnection så avbryts spelet.
+	På samma sätt byter spelaren state till DISCONNECTED om den inte får package från servern på N sekunder.

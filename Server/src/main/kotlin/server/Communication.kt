@@ -1,5 +1,6 @@
 package server
 
+import game.byId
 import java.net.DatagramPacket
 import java.net.SocketAddress
 
@@ -11,7 +12,16 @@ fun read(): DatagramPacket {
     val buf = ByteArray(256)
     val packet = DatagramPacket(buf, buf.size)
     Server.socket.receive(packet)
-    packet.address
+
+    // Refreshes timeOfLastPackage for the player who sent the packet.
+    when (packet.address) {
+        Server.connections.player1?.address -> {
+            Server.connections.player1?.timeOfLastPackage?.refresh()
+        }
+        Server.connections.player2?.address -> {
+            Server.connections.player2?.timeOfLastPackage?.refresh()
+        }
+    }
 
     // TODO: 2022-05-01 DEBUG PRINT TO REMOVE
     println("Received Packet DatagramPacket $packet")
@@ -51,4 +61,18 @@ fun sendBothPlayers(command: SendCommand, data: Data){
  */
 fun sendBothPlayers(command: SendCommand){
     sendBothPlayers(command, "")
+}
+
+suspend fun listenToPlayerCommands(){
+    while(Server.connections.player1 != null && Server.connections.player2 != null){
+        val (pck, addr) = read().extractWithAddress() ?: continue
+
+        when(addr){
+            Server.connections.player1?.address -> Server.connections.player1?.lastPacket = pck
+            Server.connections.player2?.address -> Server.connections.player2?.lastPacket = pck
+
+            // Might be an incoming connection request from third party, so reply with a denial just in case
+            else -> addr.send(SendCommand.CONNECTION_DENIED)
+        }
+    }
 }

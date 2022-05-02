@@ -6,11 +6,11 @@ Varje packet skickas som
 
 update():
     PRE_GAME ->
-        Lyssna på inkommande CONNECTION_REQUEST med NAME-package. När spelare accepteras får de CONNECTION_ACCEPTED och ett ID beroende på vilken av spelarna den är.
-        När båda är anslutna, starta spelet och övergå till IN_GAME, skicka START_GAME till klienterna.
+        Lyssna på inkommande CONNECTION_REQUEST med NAME-data i form {"name": String}. När spelare accepteras får de CONNECTION_ACCEPTED och ett ID beroende på vilken av spelarna den är. Spelare nekas om deras Package inte hör till protokollet.
+        När båda är anslutna, starta spelet och övergå till IN_GAME, skicka START_GAME till klienterna, invänta GAME_STARTED från klienterna, och börja sedan kalla update() och skicka STATE. Om GAME_STARTED inte fås av båda spelare på N sekunder, skicka GAME_ABORTED till båda spelarna och starta om servern.
 
     IN_GAME ->
-        Se till så att varje spelares timeOfLastpackage.durationSince().asSeconds() > SECONDS_UNTIL_DISCONNECTED. Om inte -> ändra client.status=DISCONNECTED och game.status=PAUSED, och skicka GAME_PAUSED till den andra spelaren.
+        Se till så att varje spelares timeOfLastpackage.durationSince().asSeconds() > SECONDS_UNTIL_DISCONNECTED. Om inte -> skicka GAME_ABORTED med data: "Player disconnected"
 
         Hantera packages från spelare ->
             MOVE: Kalla move() med direction som anges i packaget.
@@ -23,15 +23,19 @@ update():
 
         Uppdatera gameState.
 
+
+    GAME_OVER ->
+        Meddela båda spelarna att GAME_OVER, avslutar båda anslutningarna, och resettar gameState.
+
+
+
+
+
+
+wontfix?
     GAME_PAUSED ->
         Broadcasta RECONNECT_REQUEST till den DC:ade klienten. Kolla även så att den andra spelaren fortfarande skickar STALE-kommandon, och uppdatera dess timeOfLastpackage om den är det, annars ändra till GAME_ABORTED och meddela båda spelarna detta.
 
         Lyssna efter CONNECTION_REQUEST från samma IP och port som den DC:ade spelaren. Om det lyckas, återgå till IN_GAME och meddela spelarna att GAME_RESUMED.
 
         Om timeOfLastpackage.durationSince().asSeconds() > SECONDS_UNTIL_ABORTED, övergå till GAME_ABORTED och meddela båda spelarna detta.
-
-    GAME_ABORTED ->
-        Avsluta båda anslutningarna, och resetta gameState.
-
-    GAME_OVER ->
-        Meddela båda spelarna att GAME_OVER, avslutar båda anslutningarna, och resettar gameState.
