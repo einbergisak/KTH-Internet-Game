@@ -2,28 +2,41 @@ package server
 
 import game.Player
 import game.Player.Name
+import game.Status
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.net.SocketAddress
 
 /**
- *  Class representing a connection to a player
+ *  Class representing a connection to a player.
  */
-data class Connection(var address: SocketAddress, var timeOfLastPackage: Timer = Timer()) {
+data class Connection(var address: SocketAddress, var player: Player, var timeOfLastPackage: Timer = Timer()) {
     var lastPacket: Packet<ReceiveCommand>? = null
 
+    /**
+     * Performs actions corresponding to the most recent [Packet] received from the player.
+     */
     fun handleInput() {
-        // Returns if invalid packet
+        // Returns if packet is invalid.
         val (cmd, data) = lastPacket ?: return
         try {
             when (cmd) {
-                ReceiveCommand.MOVE -> TODO()
-                ReceiveCommand.INTERACT_WITH_FOOD_BOX -> TODO()
-                ReceiveCommand.CONNECTION_REQUEST -> TODO()
-                ReceiveCommand.DISCONNECTED -> TODO()
-                ReceiveCommand.STALE -> TODO()
-                ReceiveCommand.GAME_STARTED -> TODO()
+                ReceiveCommand.MOVE -> {
+                    val direction = Json.decodeFromString<Direction>(data)
+                    player.move(direction)
+                }
+                ReceiveCommand.INTERACT_WITH_FOOD_BOX -> {
+                    player.interactWithFoodBox()
+                }
+                ReceiveCommand.DISCONNECTED -> {
+                    sendBothPlayers(SendCommand.GAME_ABORTED)
+                    Server.gameState.status = Status.ABORTED
+                }
+                else -> {
+                    // TODO: 2022-05-03 remove debug print
+                    println("Invalid command: $cmd with data: $data")
+                }
             }
         } catch (e: SerializationException) {
             /* no-op */
@@ -39,33 +52,28 @@ data class Connection(var address: SocketAddress, var timeOfLastPackage: Timer =
 data class Connections(var player1: Connection? = null, var player2: Connection? = null) {
 
     /**
-     *  Returns a connection that hasn't sent a valid packet for a duration longer than [s].
+     *  Returns a connection that hasn't sent a valid packet for a duration longer than [SECONDS_UNTIL_TIMED_OUT].
      *  If none exist, returns null.
      */
-    private fun getTimedOutForLongerThan(s: Long): Connection? {
+    fun getTimedOut(): Connection? {
         val p1t = player1?.timeOfLastPackage?.elapsedSeconds
         val p2t = player2?.timeOfLastPackage?.elapsedSeconds
 
         if (p1t != null) {
-            if (p1t > s) return player1
+            if (p1t > SECONDS_UNTIL_TIMED_OUT) return player1
         }
 
         if (p2t != null) {
-            if (p2t > s) return player2
+            if (p2t > SECONDS_UNTIL_TIMED_OUT) return player2
         }
 
         return null
     }
 
+
     /**
-     *  Returns a connection that hasn't sent a valid packet for a duration longer than [SECONDS_UNTIL_TIMED_OUT].
-     *  If none exist, returns null.
+     * Handles the most recent [Package] received from each player.
      */
-    fun getTimedOut(): Connection? {
-        return getTimedOutForLongerThan(SECONDS_UNTIL_TIMED_OUT)
-    }
-
-
     fun handleInput() {
         player1?.handleInput()
         player2?.handleInput()
@@ -105,14 +113,8 @@ fun connectPlayers(): Pair<Player, Player> {
     val (name1, addr1) = newConnection()
     val (name2, addr2) = newConnection()
 
-    Server.connections.player1 = Connection(addr1)
-    Server.connections.player2 = Connection(addr2)
+    // TODO: 2022-05-03 Kolla hur referenserna samspelar
+    Server.connections.player1 = Connection(addr1, Player(1, name1))
+    Server.connections.player2 = Connection(addr2, Player(2, name2))
     return Player(1, name1) to Player(2, name2)
-}
-
-/**
- *  Returns a boolean telling whether _this_ [SocketAddress] is currently connected to the game
- */
-fun SocketAddress.isCurrentPlayer(): Boolean {
-    return (this == Server.connections.player1?.address || this == Server.connections.player2?.address)
 }

@@ -3,7 +3,6 @@ package game
 import kotlinx.serialization.Serializable
 import server.Direction
 import server.Server
-import java.lang.IllegalArgumentException
 
 
 /**
@@ -103,10 +102,3 @@ data class Player(
         pos.x = pos.x.coerceIn(MIN_X, MAX_X - PLAYER_SIZE)
     }
 }
-
-fun Pair<Player, Player>.byId(id: Int): Player? = when (id) {
-    first.id -> first
-    second.id -> second
-    else -> null
-}
-

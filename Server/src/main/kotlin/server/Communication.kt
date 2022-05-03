@@ -1,6 +1,8 @@
 package server
 
-import game.byId
+
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.net.DatagramPacket
 import java.net.SocketAddress
 
@@ -51,7 +53,7 @@ fun SocketAddress.send(command: SendCommand) {
 /**
  * Sends a [Packet] as a [DatagramPacket] to both players.
  */
-fun sendBothPlayers(command: SendCommand, data: Data){
+fun sendBothPlayers(command: SendCommand, data: Data) {
     Server.connections.player1?.address?.send(command, data)
     Server.connections.player2?.address?.send(command, data)
 }
@@ -59,15 +61,27 @@ fun sendBothPlayers(command: SendCommand, data: Data){
 /**
  * Sends a [Packet] containing only a [SendCommand] as a [DatagramPacket] to both players.
  */
-fun sendBothPlayers(command: SendCommand){
+fun sendBothPlayers(command: SendCommand) {
     sendBothPlayers(command, "")
 }
 
-suspend fun listenToPlayerCommands(){
-    while(Server.connections.player1 != null && Server.connections.player2 != null){
+/**
+ * Sends the current state to both players as a [SendState].
+ */
+fun sendUpdatedState() {
+    val sendState = Server.gameState.createSendState()
+    val json = Json.encodeToString(sendState)
+    sendBothPlayers(SendCommand.UPDATE_STATE, json)
+}
+
+/**
+ * Receives [Packet]s from players, and stores them as the most recent packet of the sending player.
+ */
+suspend fun listenToPlayerCommands() {
+    while (Server.connections.player1 != null && Server.connections.player2 != null) {
         val (pck, addr) = read().extractWithAddress() ?: continue
 
-        when(addr){
+        when (addr) {
             Server.connections.player1?.address -> Server.connections.player1?.lastPacket = pck
             Server.connections.player2?.address -> Server.connections.player2?.lastPacket = pck
 

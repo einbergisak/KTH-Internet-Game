@@ -1,16 +1,18 @@
 package server
 
 import game.GameLevel
+import game.GameState
 import game.Player
 import game.Recipe
 import kotlinx.serialization.Serializable
-import java.time.Duration
-import java.time.Instant
-
 
 typealias Seconds = Long
 
 // State som skickas varje tick. Innehåller endast den relevanta datan från GameState
+/**
+ * State to be sent by the [Server] to both players each game tick.
+ * Contains the data from the [GameState] that is relevant to the players.
+ */
 @Serializable
 data class SendState(
     val players: Pair<Player, Player>,
@@ -18,13 +20,4 @@ data class SendState(
     val gameLevel: GameLevel,
     val pointsEarned: Int,
     val timeRemaining: Seconds
-) {
-    // Secondary constructor som låter mig skapa en instans av dataclassen med en Instant istället för Duration som sista argument
-    constructor(
-        players: Pair<Player, Player>,
-        currentRecipes: Pair<Recipe, Recipe>,
-        gameLevel: GameLevel,
-        pointsEarned: Int,
-        gameStartTime: Instant
-    ) : this(players, currentRecipes, gameLevel, pointsEarned, Duration.between(gameStartTime, Instant.now()).toSeconds())
-}
+)

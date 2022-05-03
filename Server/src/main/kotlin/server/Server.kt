@@ -1,13 +1,21 @@
 package server
 
-import game.*
+import game.GameLevel
+import game.GameState
+import game.Status
+import game.checkRecipeCompleted
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.lang.Thread.sleep
 import java.net.DatagramSocket
 import java.net.InetAddress
 
+/**
+ * Main server class.
+ */
 object Server {
 
     var connections: Connections = Connections()
@@ -32,6 +40,12 @@ object Server {
                     updateGame()
                     sleep(TICK_DURATION_MILLIS)
                 }
+                if (gameState.status == Status.ABORTED) {
+                    abort()
+                } else if (gameState.status == Status.GAME_OVER) {
+                    gameOver()
+                }
+                gameState.status = Status.PRE_GAME
             }
         }
     }
@@ -47,7 +61,13 @@ object Server {
         var p2Handshake = false
         while (!(p1Handshake && p2Handshake)) {
             sleep(TICK_DURATION_MILLIS)
-            if (abortIfTimedOut()) return
+
+            // Abort game if either player has timed out
+            if (connections.getTimedOut() != null) {
+                gameState.status = Status.ABORTED
+                return
+            }
+
             val (packet, addr) = read().extractWithAddress() ?: continue
             if (packet.type == ReceiveCommand.GAME_STARTED) {
                 when (addr) {
@@ -62,9 +82,12 @@ object Server {
         gameState.status = Status.IN_GAME
     }
 
+    /**
+     * Updates the game, and sends the updated [GameState] to each player.
+     */
     private fun updateGame() {
 
-        // Ends game when time has reached 0
+        // End game when timeRemaining has reached 0 seconds
         if (gameState.timeRemaining == 0L) {
             sendBothPlayers(SendCommand.GAME_OVER, "${gameState.pointsEarned}")
             gameState.status = Status.GAME_OVER
@@ -72,7 +95,8 @@ object Server {
         }
 
         connections.handleInput()
-
+        checkRecipeCompleted()
+        sendUpdatedState()
     }
 
     /**
@@ -87,15 +111,18 @@ object Server {
     }
 
     /**
-     *  Returns false if a player has not timed out, otherwise it returns true and resets the game.
+     *  Tells both players that the game has been aborted.
      */
-    private fun abortIfTimedOut(): Boolean {
-        if (connections.getTimedOut() != null) {
-            sendBothPlayers(SendCommand.GAME_ABORTED)
-            init()
-            return true
-        }
-        return false
+    private fun abort() {
+        sendBothPlayers(SendCommand.GAME_ABORTED)
+    }
+
+    /**
+     *  Tells both players that the game has ended, and sends them the final score.
+     */
+    private fun gameOver() {
+        val points = Json.encodeToString(gameState.pointsEarned)
+        sendBothPlayers(SendCommand.GAME_OVER, points)
     }
 
 }

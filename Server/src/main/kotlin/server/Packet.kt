@@ -10,7 +10,7 @@ typealias Data = String
 /**
  *  Representation of game data extracted from a [DatagramPacket]
  */
-data class Packet<T: Command>(val type: T, val data: Data)
+data class Packet<T : Command>(val type: T, val data: Data)
 
 /**
  *  Extracts a [Packet] with [Command] and [Data] from _this_ [DatagramPacket]
@@ -26,6 +26,6 @@ fun DatagramPacket.extract(): Packet<ReceiveCommand>? {
 /**
  *  Extracts a [Packet] with [Command] and [Data], as well as the [SocketAddress], from _this_ [DatagramPacket] as a [Pair].
  */
-fun DatagramPacket.extractWithAddress(): Pair<Packet<ReceiveCommand>, SocketAddress>?{
+fun DatagramPacket.extractWithAddress(): Pair<Packet<ReceiveCommand>, SocketAddress>? {
     return this.extract()?.to(this.socketAddress)
 }
