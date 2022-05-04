@@ -11,7 +11,7 @@ import java.net.SocketAddress
  *  Receives and returns a [DatagramPacket]
  */
 fun read(): DatagramPacket {
-    val buf = ByteArray(256)
+    val buf = ByteArray(128)
     val packet = DatagramPacket(buf, buf.size)
     Server.socket.receive(packet)
 
@@ -35,7 +35,7 @@ fun read(): DatagramPacket {
  */
 fun SocketAddress.send(command: SendCommand, data: Data) {
     val p = Packet(command, data)
-    val sendData = (p.type.toString() + p.data).encodeToByteArray()
+    val sendData = Json.encodeToString(p).encodeToByteArray()
     val buf = ByteArray(sendData.size)
     val packet = DatagramPacket(sendData, buf.size, this)
     Server.socket.send(packet)
@@ -47,7 +47,7 @@ fun SocketAddress.send(command: SendCommand, data: Data) {
  * Creates and sends a [DatagramPacket] containing the [Command] to the player with _this_ [SocketAddress].
  */
 fun SocketAddress.send(command: SendCommand) {
-    send(command, "")
+    send(command, "nil")
 }
 
 /**

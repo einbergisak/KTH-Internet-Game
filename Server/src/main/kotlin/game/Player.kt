@@ -6,7 +6,7 @@ import server.Server
 
 
 /**
- *  An in game player, separate from the [server.Connection] to
+ *  An in game player.
  */
 @Serializable
 data class Player(

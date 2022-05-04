@@ -69,7 +69,7 @@ object Server {
             }
 
             val (packet, addr) = read().extractWithAddress() ?: continue
-            if (packet.type == ReceiveCommand.GAME_STARTED) {
+            if (packet.command == ReceiveCommand.GAME_STARTED) {
                 when (addr) {
                     connections.player1?.address -> p1Handshake = true
 

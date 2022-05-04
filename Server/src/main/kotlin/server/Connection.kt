@@ -90,8 +90,8 @@ fun newConnection(): Pair<Name, SocketAddress> {
 
         // If data recieved does not conform to the protocol, try again
         val (pckt, addr) = datagram.extractWithAddress() ?: continue
-
-        if (pckt.type == ReceiveCommand.CONNECTION_REQUEST) {
+        println("Extracted $pckt succesfully in newConnection()")
+        if (pckt.command == ReceiveCommand.CONNECTION_REQUEST) {
             val name = try {
                 Json.decodeFromString<Name>(pckt.data)
             } catch (e: SerializationException) {

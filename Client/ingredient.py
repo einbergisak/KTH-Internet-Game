@@ -1,0 +1,25 @@
+from enum import Enum
+
+
+class Ingredient(str, Enum):
+    Bacon = "Bacon"
+    Egg = "Egg"
+    Milk = "Milk"
+    Flour = "Flour"
+    Cheese = "Cheese"
+    Cream = "Cream"
+    Pasta = "Pasta"
+    BakingPowder = "BakingPowder"
+    Sugar = "Sugar"
+    Butter = "Butter"
+    Salt = "Salt"
+    Pepper = "Pepper"
+    Onion = "Onion"
+    Potato = "Potato"
+    Basil = "Basil"
+    Nuts = "Nuts"
+    Oil = "Oil"
+    Tomato = "Tomato"
+    Garlic = "Garlic"
+    Parsley = "Parsley"
+    ChiliPepper = "ChiliPepper"
