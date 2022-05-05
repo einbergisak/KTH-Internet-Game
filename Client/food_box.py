@@ -7,4 +7,4 @@ from pos import Pos
 @dataclass
 class FoodBox:
     pos: Pos
-    ingredient = Ingredient | None
+    ingredient: Ingredient | None = None

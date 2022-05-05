@@ -1,6 +1,7 @@
 package server
 
 
+import game.fmt
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.DatagramPacket
@@ -35,7 +36,7 @@ fun read(): DatagramPacket {
  */
 fun SocketAddress.send(command: SendCommand, data: Data) {
     val p = Packet(command, data)
-    val sendData = Json.encodeToString(p).encodeToByteArray()
+    val sendData = fmt.encodeToString(p).encodeToByteArray()
     val buf = ByteArray(sendData.size)
     val packet = DatagramPacket(sendData, buf.size, this)
     Server.socket.send(packet)
@@ -70,7 +71,7 @@ fun sendBothPlayers(command: SendCommand) {
  */
 fun sendUpdatedState() {
     val sendState = Server.gameState.createSendState()
-    val json = Json.encodeToString(sendState)
+    val json = fmt.encodeToString(sendState)
     sendBothPlayers(SendCommand.UPDATE_STATE, json)
 }
 

@@ -1,8 +1,8 @@
 package server
 
 import game.Player
-import game.Player.Name
 import game.Status
+import game.fmt
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -23,7 +23,7 @@ data class Connection(var address: SocketAddress, var player: Player, var timeOf
         try {
             when (cmd) {
                 ReceiveCommand.MOVE -> {
-                    val direction = Json.decodeFromString<Direction>(data)
+                    val direction = fmt.decodeFromString<Direction>(data)
                     player.move(direction)
                 }
                 ReceiveCommand.INTERACT_WITH_FOOD_BOX -> {
@@ -84,7 +84,7 @@ data class Connections(var player1: Connection? = null, var player2: Connection?
 /**
  *  Establishes a new connection with a client, returning their [Player] [Name] and [SocketAddress]
  */
-fun newConnection(): Pair<Name, SocketAddress> {
+fun newConnection(): Pair<String, SocketAddress> {
     while (true) {
         val datagram = read()
 
@@ -93,7 +93,7 @@ fun newConnection(): Pair<Name, SocketAddress> {
         println("Extracted $pckt succesfully in newConnection()")
         if (pckt.command == ReceiveCommand.CONNECTION_REQUEST) {
             val name = try {
-                Json.decodeFromString<Name>(pckt.data)
+                fmt.decodeFromString<String>(pckt.data)
             } catch (e: SerializationException) {
                 addr.send(SendCommand.CONNECTION_DENIED)
                 continue

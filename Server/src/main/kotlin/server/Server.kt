@@ -1,9 +1,6 @@
 package server
 
-import game.GameLevel
-import game.GameState
-import game.Status
-import game.checkRecipeCompleted
+import game.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -18,7 +15,7 @@ import java.net.InetAddress
  */
 object Server {
 
-    var connections: Connections = Connections()
+    lateinit var connections: Connections
     lateinit var gameState: GameState
     lateinit var socket: DatagramSocket
 
@@ -100,11 +97,11 @@ object Server {
     }
 
     /**
-     *  Establishes [Connections] to players, and resets the [GameState]
+     *  Establishes [Connections] to players, and resets the [GameState].
      */
     private fun init() {
-        val players = connectPlayers()
         connections = Connections()
+        val players = connectPlayers()
         gameState = GameState(
             GameLevel(), players
         )
@@ -121,7 +118,7 @@ object Server {
      *  Tells both players that the game has ended, and sends them the final score.
      */
     private fun gameOver() {
-        val points = Json.encodeToString(gameState.pointsEarned)
+        val points = fmt.encodeToString(gameState.pointsEarned)
         sendBothPlayers(SendCommand.GAME_OVER, points)
     }
 

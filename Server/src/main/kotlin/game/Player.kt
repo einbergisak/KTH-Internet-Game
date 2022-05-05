@@ -11,7 +11,7 @@ import server.Server
 @Serializable
 data class Player(
     val id: Int,
-    val name: Name,
+    val name: String,
     var pos: Pos = if (id == 1) PLAYER1_START_POS else if (id == 2) PLAYER2_START_POS else throw IllegalArgumentException(
         "Player ID can only be 1 or 2"
     ),
@@ -21,8 +21,6 @@ data class Player(
     override val bounds: Rect
         get() = Rect(pos, Pos(pos.x + PLAYER_SIZE - 1, pos.y + PLAYER_SIZE - 1))
 
-    @Serializable
-    data class Name(val name: String)
 
     /**
      *  If the player is standing adjacent to a [FoodBox],

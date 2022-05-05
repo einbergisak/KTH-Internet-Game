@@ -1,5 +1,6 @@
 package server
 
+import game.fmt
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -21,7 +22,7 @@ fun DatagramPacket.extract(): Packet<ReceiveCommand>? {
     return try {
         val s = String(this.data, 0, this.length)
         println("received: $s")
-        Json.decodeFromString<Packet<ReceiveCommand>>(s).also {  println("extracted: $it") }
+        fmt.decodeFromString<Packet<ReceiveCommand>>(s).also {  println("extracted: $it") }
 
     } catch (e: Exception) {
         println(e)

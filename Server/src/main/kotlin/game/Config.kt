@@ -1,5 +1,7 @@
 package game
 
+import kotlinx.serialization.json.Json
+
 // Game configuration
 const val MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT = true // Implemented due to uncertainty regarding project criteria
 const val GAME_WIDTH = 1000
@@ -26,3 +28,26 @@ val PLAYER2_START_POS = Pos(GAME_WIDTH - SIDE_TABLE_WIDTH - PLAYER_SIZE, MAX_Y /
 const val GAME_DURATION
         /** In seconds */
         : Long = 180
+val LEFT_TABLE = Table(
+    Rect(
+        LEFT_TABLE_POS,
+        Pos(LEFT_TABLE_POS.x + SIDE_TABLE_WIDTH, LEFT_TABLE_POS.y + SIDE_TABLE_HEIGHT)
+    ), false
+)
+val RIGHT_TABLE = Table(
+    Rect(
+        RIGHT_TABLE_POS,
+        Pos(RIGHT_TABLE_POS.x + SIDE_TABLE_WIDTH, RIGHT_TABLE_POS.y + SIDE_TABLE_HEIGHT)
+    ), false
+)
+val MAIN_TABLE = Table(
+    Rect(
+        MAIN_TABLE_POS,
+        Pos(MAIN_TABLE_POS.x + MAIN_TABLE_WIDTH, MAIN_TABLE_POS.y + MAIN_TABLE_HEIGHT)
+    ), true
+)
+val fmt = Json {
+    encodeDefaults = true
+    prettyPrint = true
+    isLenient = true
+}

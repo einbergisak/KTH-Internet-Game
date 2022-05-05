@@ -1,5 +1,8 @@
 import pygame as pg
 import communication
+import game
+from command import ReceiveCommand, SendCommand
+from packet import Packet
 
 pg.init()
 screen = pg.display.set_mode((1000, 800), pg.SCALED)
@@ -11,4 +14,15 @@ background = background.convert()
 background.fill((250,250,250))
 
 if __name__ == '__main__':
-    communication.connect()
+    g = game.Game()
+    game.init()
+
+    # Game started, move from menu to game
+
+    g.update()
+
+
+
+
+
+
