@@ -19,15 +19,16 @@ def parse_tables(tables: dict) -> [Table]:
     return list
 
 
-def parse_foodboxes(foodboxes: dict):
+def parse_foodboxes(foodboxes: [dict]):
     list: [FoodBox] = []
-    for fb in foodboxes.values():
+    for fb in foodboxes:
         pos = Pos(fb["pos"]["x"], fb["pos"]["y"])
         list.append(FoodBox(pos, fb["containedIngredient"]))
     return list
 
 
 def parse_state(data: dict):
+    print(type(data))
     p1 = data["players"]["first"]
     player1 = Player(p1["pos"], p1["name"])
     p2 = data["players"]["second"]

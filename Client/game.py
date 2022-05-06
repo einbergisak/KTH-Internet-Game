@@ -1,3 +1,5 @@
+import timeit
+
 import pygame as pg
 
 import communication
@@ -36,9 +38,14 @@ class Game:
 
             # Show on screen that you are connected and waiting for other player.
             self.graphics.edit_menu_text("Connected succesfully! Waiting for game start..")
+            self.graphics.draw_menu()
 
             while True:
-                cmd = communication.read()["command"]
+                try:
+                    cmd = communication.read()["command"]
+                except TimeoutError:
+                    continue
+
                 if cmd == ReceiveCommand.START_GAME:
                     communication.send(Packet(SendCommand.GAME_STARTED, ""))
                     return True
@@ -50,12 +57,13 @@ class Game:
             recv = communication.read()
             cmd = recv["command"]
             data = recv["data"]
+            print(data)
             if cmd == ReceiveCommand.UPDATE_STATE:
                 handle_input()
-                self.state = parse_state(data)
+                self.state = parse_state(communication.jdec.decode(data))
                 draw()
             elif cmd == ReceiveCommand.GAME_OVER:
                 game_over()
             elif cmd == ReceiveCommand.GAME_ABORTED:
                 return
-            clock.tick(FRAMERATE)
+            self.clock.tick(FRAMERATE)

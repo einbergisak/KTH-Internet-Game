@@ -78,6 +78,7 @@ object Server {
                 }
             } else continue
         }
+        println("Both players are connected. Starting game.")
         gameState.status = Status.IN_GAME
     }
 
@@ -92,7 +93,7 @@ object Server {
             gameState.status = Status.GAME_OVER
             return
         }
-
+        println("Game updated")
         connections.handleInput()
         checkRecipeCompleted()
         sendUpdatedState()

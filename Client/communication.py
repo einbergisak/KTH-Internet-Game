@@ -2,6 +2,7 @@ import json
 import socket
 from time import sleep
 
+import config
 from command import ReceiveCommand, SendCommand
 from packet import Packet
 
@@ -11,18 +12,19 @@ BUFFER_SIZE = 512
 SERVER = (SERVER_IP, SERVER_PORT)
 
 sckt = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sckt.settimeout(1.0)
+sckt.settimeout(config.SECONDS_UNTIL_TIMEOUT)
 
-jc = json.encoder.JSONEncoder()
+jenc = json.encoder.JSONEncoder()
+jdec = json.JSONDecoder()
 
-print(jc.encode(Packet("CMD", "Data").json()))
+print(jenc.encode(Packet("CMD", "Data").json()))
 
 
 def as_json_string(name: str, val: str):
     packet = {
         name: val
     }
-    return jc.encode(packet)
+    return jenc.encode(packet)
 
 
 def send(packet: Packet):
@@ -30,7 +32,11 @@ def send(packet: Packet):
 
 
 def read() -> dict:
-    recv = sckt.recv(1024)
+    """
+        Reads an incoming Packet, and returns a corresponding dictionary.
+        Throws TimeoutError if no package is received for config.SECONDS_UNTIL_TIMEOUT seconds
+    """
+    recv = sckt.recv(4096)
     return json.loads(recv)
 
 
@@ -47,7 +53,7 @@ def connect(ctx, name: str) -> bool:
         recv = read()
 
         cmd = recv["command"]
-        print(f"Received{cmd}")
+        print(f"Received: {cmd}")
         if cmd == ReceiveCommand.CONNECTION_ACCEPTED:
             return True
     except socket.timeout:
