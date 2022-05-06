@@ -82,7 +82,7 @@ data class Connections(var player1: Connection? = null, var player2: Connection?
 
 
 /**
- *  Establishes a new connection with a client, returning their [Player] [Name] and [SocketAddress]
+ *  Establishes a new connection with a client, returning their [Player] name and [SocketAddress]
  */
 fun newConnection(): Pair<String, SocketAddress> {
     while (true) {
@@ -92,13 +92,15 @@ fun newConnection(): Pair<String, SocketAddress> {
         val (pckt, addr) = datagram.extractWithAddress() ?: continue
         println("Extracted $pckt succesfully in newConnection()")
         if (pckt.command == ReceiveCommand.CONNECTION_REQUEST) {
-            val name = try {
-                fmt.decodeFromString<String>(pckt.data)
-            } catch (e: SerializationException) {
+            val name = pckt.data
+            // Makes sure that the same client is not attempting to connect twice.
+            if (addr.isCurrentPlayer()){
                 addr.send(SendCommand.CONNECTION_DENIED)
                 continue
-            }.also { addr.send(SendCommand.CONNECTION_ACCEPTED) }
-            return name to addr
+            }else {
+                addr.send(SendCommand.CONNECTION_ACCEPTED)
+                return name to addr
+            }
         } else {
             continue
         }
@@ -117,4 +119,11 @@ fun connectPlayers(): Pair<Player, Player> {
     Server.connections.player1 = Connection(addr1, Player(1, name1))
     Server.connections.player2 = Connection(addr2, Player(2, name2))
     return Player(1, name1) to Player(2, name2)
+}
+
+/**
+ *  Returns a boolean telling whether _this_ [SocketAddress] is currently connected to the game
+ */
+fun SocketAddress.isCurrentPlayer(): Boolean {
+    return (this == Server.connections.player1?.address || this == Server.connections.player2?.address)
 }

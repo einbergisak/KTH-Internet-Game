@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 
-from food_box import FoodBox
-from ingredient import Ingredient
-from parsing import parse_tables
 from player import Player
-from pos import Pos
 from recipe import Recipe
 from table import Table
 

@@ -22,6 +22,8 @@ object Server {
     @JvmStatic
     fun main(args: Array<String>) {
         runBlocking(Dispatchers.IO) {
+            println(InetAddress.getLocalHost())
+            println(InetAddress.getByName(SERVER_IP))
             socket = DatagramSocket(SERVER_PORT, InetAddress.getByName(SERVER_IP))
             while (true) {
                 init()
