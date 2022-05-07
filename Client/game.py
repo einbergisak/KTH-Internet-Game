@@ -1,4 +1,4 @@
-import timeit
+from time import sleep
 
 import pygame as pg
 
@@ -7,25 +7,47 @@ from command import ReceiveCommand, SendCommand
 from config import FRAMERATE
 from game_state import GameState
 from graphics import Graphics
+from io_thread import IOThread
 from packet import Packet
-from parsing import parse_state
 
 
 def game_over():
     print("todo")
 
 
-def draw():
-    pg.display.flip()
-    print("todo")
-
-
 def handle_input():
-    key = pg.key.get_pressed()
+    active_keys = pg.key.get_pressed()
+    cmd: SendCommand | None = None
+    data: str | None = None
+
+    # Up
+    if active_keys[pg.K_w]:
+        cmd = SendCommand.MOVE
+        data = "UP"
+    # Right
+    if active_keys[pg.K_d]:
+        cmd = SendCommand.MOVE
+        data = "RIGHT"
+    # Down
+    if active_keys[pg.K_s]:
+        cmd = SendCommand.MOVE
+        data = "DOWN"
+    # Left
+    if active_keys[pg.K_a]:
+        cmd = SendCommand.MOVE
+        data = "LEFT"
+    # Interact with FoodBox
+    if active_keys[pg.K_SPACE]:
+        cmd = SendCommand.INTERACT_WITH_FOOD_BOX
+        data = ""
+
+    if cmd is not None:
+        packet = Packet(cmd, data)
+        communication.send(packet)
 
 
 class Game:
-    state: GameState
+    state: GameState | None = None
     clock = pg.time.Clock()
 
     def __init__(self):
@@ -41,9 +63,13 @@ class Game:
             self.graphics.draw_menu()
 
             while True:
+                pg.event.pump()
                 try:
                     cmd = communication.read()["command"]
                 except TimeoutError:
+                    continue
+                except Exception:
+                    print("this shouldn't happen")
                     continue
 
                 if cmd == ReceiveCommand.START_GAME:
@@ -53,17 +79,18 @@ class Game:
                     return False
 
     def update(self):
-        while True:
-            recv = communication.read()
-            cmd = recv["command"]
-            data = recv["data"]
-            print(data)
-            if cmd == ReceiveCommand.UPDATE_STATE:
-                handle_input()
-                self.state = parse_state(communication.jdec.decode(data))
-                draw()
-            elif cmd == ReceiveCommand.GAME_OVER:
-                game_over()
-            elif cmd == ReceiveCommand.GAME_ABORTED:
-                return
-            self.clock.tick(FRAMERATE)
+        thread = IOThread(self)
+        thread.start()
+        done = False
+        while not done:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    done = True
+
+            if not thread.is_alive():
+                print("thread dead")
+                break
+            handle_input()
+            self.graphics.draw_game()
+            self.clock.tick(60)
+            print("asdasdasdasdfdfksjkbjh")

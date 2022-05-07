@@ -58,9 +58,10 @@ def connect(ctx, name: str) -> bool:
             return True
     except socket.timeout:
         ctx.graphics.edit_menu_text("Connection timed out, try again.")
+        ctx.graphics.draw_menu()
+        sleep(1)
     except ConnectionResetError:
         ctx.graphics.edit_menu_text("Connection refused, try again.")
-    ctx.graphics.draw_menu()
-    sleep(2)
+        ctx.graphics.draw_menu()
+        sleep(1)
     return False
-

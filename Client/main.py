@@ -14,7 +14,6 @@ if __name__ == '__main__':
             break
 
     # Game started, move from menu to game
-
     g.update()
 
 

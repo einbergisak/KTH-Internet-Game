@@ -4,19 +4,19 @@ import kotlinx.serialization.json.Json
 
 // Game configuration
 const val MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT = true // Implemented due to uncertainty regarding project criteria
-const val GAME_WIDTH = 1000
-const val GAME_HEIGHT = 500
+const val GAME_WIDTH = 1200
+const val GAME_HEIGHT = 600
 const val PLAYER_VEL = 2
 const val MIN_X = 0
 const val MAX_X = GAME_WIDTH - 1
 const val MIN_Y = 0
 const val MAX_Y = GAME_HEIGHT - 1
-const val PLAYER_SIZE = 50
+const val PLAYER_SIZE = 80
 const val FOODBOXES_PER_TABLE = 5
 const val SIDE_TABLE_HEIGHT = GAME_HEIGHT
 val MAIN_TABLE_HEIGHT =
     if (MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT) SIDE_TABLE_HEIGHT else SIDE_TABLE_HEIGHT - PLAYER_SIZE * 2
-val FOODBOX_SIZE = MAIN_TABLE_HEIGHT / (FOODBOXES_PER_TABLE + 1)
+val FOODBOX_SIZE = 100
 val SIDE_TABLE_WIDTH = FOODBOX_SIZE
 val MAIN_TABLE_WIDTH = SIDE_TABLE_WIDTH * 2
 val MAIN_TABLE_POS = Pos(MAX_X / 2 - MAIN_TABLE_WIDTH / 2, 0)
@@ -48,6 +48,5 @@ val MAIN_TABLE = Table(
 )
 val fmt = Json {
     encodeDefaults = true
-    prettyPrint = true
     isLenient = true
 }

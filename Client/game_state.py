@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from player import Player
 from recipe import Recipe
-from table import Table
+from table import Table, Tables
 
 
 @dataclass
@@ -14,4 +14,4 @@ class GameState:
     game_bounds: ((int, int), (int, int))
     points: int
     time_remaining: int
-    tables: [Table]
+    tables: Tables
