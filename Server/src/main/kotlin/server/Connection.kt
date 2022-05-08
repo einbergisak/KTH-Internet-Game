@@ -20,6 +20,7 @@ data class Connection(var address: SocketAddress, var player: Player, var timeOf
     fun handleInput() {
         // Returns if packet is invalid.
         val (cmd, data) = lastPacket ?: return
+
         try {
             when (cmd) {
                 ReceiveCommand.MOVE -> {

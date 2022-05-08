@@ -17,7 +17,7 @@ fun read(): DatagramPacket {
     Server.socket.receive(packet)
 
     // Refreshes timeOfLastPackage for the player who sent the packet.
-    when (packet.address) {
+    when (packet.socketAddress) {
         Server.connections.player1?.address -> {
             Server.connections.player1?.timeOfLastPackage?.refresh()
         }
@@ -41,7 +41,7 @@ fun SocketAddress.send(command: SendCommand, data: Data) {
     val packet = DatagramPacket(sendData, buf.size, this)
     Server.socket.send(packet)
     // TODO: 2022-05-01 DEBUG PRINT TO REMOVE
-    println("Sending Packet $p as DatagramPacket $packet")
+//    println("Sending Packet $p as DatagramPacket $packet")
 }
 
 /**

@@ -57,46 +57,40 @@ data class Player(
      */
     fun move(direction: Direction) {
         val otherPlayer =
-            if (this === Server.gameState.players.first) Server.gameState.players.second else Server.gameState.players.first
+            (if (this === Server.connections.player1?.player) Server.connections.player2?.player else Server.connections.player1?.player) ?: return
 
         // The other player is added to the list of collidable objects if game settings allow them to cross the table
-        val objects = Server.gameState.gameLevel.tables.getAll().toMutableList<Bounded>()
-            .also { if (!MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT) it.add(otherPlayer) }
+        val objects = Server.gameState.gameLevel.tables.getAll().toMutableList<Bounded>().also { it.add(otherPlayer) }
 
         // Movement + Collision detection: Checks for each object's bound if it overlaps the player's bound
-        for (obj in objects) {
-            val rect: Rect = obj.bounds
+
+        Outer@for (step in 0 until PLAYER_VEL) {
+            val before = pos.copy()
             when (direction) {
                 Direction.UP -> {
-                    pos.y -= PLAYER_VEL
-                    if (rect.overlaps(bounds)) {
-                        pos.y = rect.botright.y + 1
-                    }
+                    pos.y -= 1
                 }
                 Direction.LEFT -> {
-                    pos.x -= PLAYER_VEL
-                    if (rect.overlaps(bounds)) {
-                        pos.x = rect.botright.x + 1
-                    }
+                    pos.x -= 1
                 }
                 Direction.DOWN -> {
-                    pos.y += PLAYER_VEL
-                    if (rect.overlaps(bounds)) {
-                        pos.y = rect.topleft.y - 1
-                    }
+                    pos.y += 1
                 }
                 Direction.RIGHT -> {
-                    pos.x += PLAYER_VEL
-                    if (rect.overlaps(bounds)) {
-                        pos.x = rect.topleft.x - 1
-                    }
+                    pos.x += 1
                 }
             }
+            for (obj in objects) {
+                if (this.bounds.overlaps(obj.bounds)) {
+                    pos.x = before.x
+                    pos.y = before.y
+                }
+            }
+            // Coerce the player to be inside the game bounds
+            pos.y = pos.y.coerceIn(MIN_Y, GAME_HEIGHT - PLAYER_SIZE)
         }
 
-
-        // Coerce the player to be inside the game bounds
-        pos.y = pos.y.coerceIn(MIN_Y, MAX_Y - PLAYER_SIZE)
-        pos.x = pos.x.coerceIn(MIN_X, MAX_X - PLAYER_SIZE)
+//        Coercing x-position should be redundant due to tables blocking each side of the game
+//        pos.x = pos.x.coerceIn(MIN_X, MAX_X - PLAYER_SIZE)
     }
 }

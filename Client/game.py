@@ -93,4 +93,3 @@ class Game:
             handle_input()
             self.graphics.draw_game()
             self.clock.tick(60)
-            print("asdasdasdasdfdfksjkbjh")

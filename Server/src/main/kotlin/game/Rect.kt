@@ -13,9 +13,19 @@ data class Rect(var topleft: Pos, var botright: Pos) {
      * Returns true if _this_ [Rect] overlaps supplied argument.
      */
     fun overlaps(other: Rect): Boolean {
-        return !((topleft.x > other.botright.x || other.topleft.x > botright.x) // En är till vänster om den andra
-                ||
-                (botright.y > other.topleft.y || other.botright.y > topleft.y)) // En är övanför den andra
-        // Om inget av dem gäller så överlappar de någonstans
+
+        // Disjunction on x-axis
+        if (topleft.x > other.botright.x || other.topleft.x > botright.x) {
+            return false
+        }
+
+        // Disjunction on y-axis
+        if (other.topleft.y > botright.y || topleft.y  > other.botright.y ) {
+            return false
+        }
+
+        // No disjunction on either axis infers that there is an overlap
+        return true
+
     }
 }

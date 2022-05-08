@@ -93,7 +93,12 @@ object Server {
             gameState.status = Status.GAME_OVER
             return
         }
-        println("Game updated")
+
+        if (connections.getTimedOut() != null){
+            gameState.status = Status.ABORTED
+            return
+        }
+
         connections.handleInput()
         checkRecipeCompleted()
         sendUpdatedState()
