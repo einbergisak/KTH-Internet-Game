@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 const val MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT = true // Implemented due to uncertainty regarding project criteria
 const val GAME_WIDTH = 1200
 const val GAME_HEIGHT = 700
-const val PLAYER_VEL = 20
+const val PLAYER_VEL = 15
 const val MIN_X = 0
 const val MAX_X = GAME_WIDTH - 1
 const val MIN_Y = 0

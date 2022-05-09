@@ -10,7 +10,7 @@ from _communication.io_thread import IOThread
 from _communication.packet import Packet
 
 
-def handle_input():
+def handle_input() -> bool:
     active_keys = pg.key.get_pressed()
     cmd: SendCommand | None = None
     data: str | None = None
@@ -32,8 +32,12 @@ def handle_input():
         cmd = SendCommand.MOVE
         data = "LEFT"
 
-    packet = Packet(cmd, data)
-    communication.send(packet)
+    if cmd is not None:
+        packet = Packet(cmd, data)
+        communication.send(packet)
+        return True
+    else:
+        return False
 
 
 class Game:
@@ -89,21 +93,19 @@ class Game:
 
             handle_input()
 
-            self.graphics.draw_game()
-
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     done = True
                 if event.type == pg.KEYDOWN:
-                    pressed = pg.key.get_pressed()
-                    if pressed[pg.K_SPACE]:
+                    if event.key == pg.K_SPACE:
                         communication.send(Packet(SendCommand.INTERACT_WITH_FOOD_BOX, ""))
-                    elif pressed[pg.K_ESCAPE]:
+                    elif event.key == pg.K_ESCAPE:
                         communication.send(Packet(SendCommand.DISCONNECTED, ""))
                         done = True
                         break
 
-            self.clock.tick(30)
+            self.graphics.draw_game()
+            self.clock.tick(60)
         if self.other_disconnected:
             self.graphics.show_disconnected_screen()
             sleep(3)

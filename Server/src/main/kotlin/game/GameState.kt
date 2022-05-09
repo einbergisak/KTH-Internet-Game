@@ -3,6 +3,7 @@ package game
 import server.SendState
 import server.Server
 import server.Timer
+import javax.tools.JavaCompiler
 
 
 /**
@@ -37,45 +38,42 @@ class GameState(val gameLevel: GameLevel, val players: Pair<Player, Player>) {
         val rec1 = remainingRecipes.removeLast()
         val rec2 = remainingRecipes.removeLast()
         currentRecipes = rec1 to rec2
-        val ing1 = rec1.ingredients
-        val ing2 = rec2.ingredients
+        val (larger, smaller) = if (rec1.ingredients.size > rec2.ingredients.size) rec1 to rec2 else rec2 to rec1
 
-        val zip = ing1.zip(ing2)
+        // Remove any common ingredients by performing set difference.
+        val ing1 = smaller.ingredients.shuffled().toMutableList()
+        val ing2 = larger.ingredients.minus(smaller.ingredients).shuffled().toMutableList()
+
         val putOnLeftSide = mutableListOf<Ingredient>()
         val putOnRightSide = mutableListOf<Ingredient>()
 
-        // Adds half of ingredients for each recipe to each 'Side table'
-        for (i in 0 until (zip.size / 2)) {
-            val (l, r) = zip[i]
-            putOnLeftSide.apply {
-                add(l)
-                add(r)
-            }
-        }
-        for (i in ((zip.size) / 2) until zip.size) {
-            val (l, r) = zip[i]
-            putOnRightSide.apply {
-                add(l)
-                add(r)
-            }
+        // Distributes the ingredients evenly on each side.
+        while (ing1.isNotEmpty() || ing2.isNotEmpty()){
+            ing1.removeFirstOrNull()?.let { putOnLeftSide.add(it) }
+            ing1.removeFirstOrNull()?.let { putOnRightSide.add(it) }
+            ing2.removeFirstOrNull()?.let { putOnLeftSide.add(it) }
+            ing2.removeFirstOrNull()?.let { putOnRightSide.add(it) }
         }
 
         // Fill remaining FoodBoxes with ingredients that are not in any of the current recipes, in shuffled order
-        val shuffledIngredients =
-            Ingredient.values().asList().minus(ing1.union(ing2)).toMutableList().also { it.shuffle() }
-        val emptyBoxesLeft = FOODBOXES_PER_TABLE - zip.size / 2
-        val emptyBoxesRight = FOODBOXES_PER_TABLE - (zip.size + 1) / 2
+        val ingredientsNotInRecipes =
+            Ingredient.values().asList().minus(ing1.union(ing2)).shuffled().toMutableList()
+        val emptyBoxesLeft = FOODBOXES_PER_TABLE - putOnLeftSide.size
+        val emptyBoxesRight = FOODBOXES_PER_TABLE - putOnRightSide.size
         repeat(emptyBoxesLeft) {
-            putOnLeftSide.add(shuffledIngredients.removeFirst())
+            putOnLeftSide.add(ingredientsNotInRecipes.removeFirst())
         }
         repeat(emptyBoxesRight) {
-            putOnRightSide.add(shuffledIngredients.removeFirst())
+            putOnRightSide.add(ingredientsNotInRecipes.removeFirst())
         }
+
+        // Shuffle lists again so that the required ingredients aren't always on top.
+        putOnRightSide.shuffle()
+        putOnLeftSide.shuffle()
 
         // Fill FoodBoxes
         gameLevel.tables.left.foodBoxes.forEach { it.containedIngredient = putOnLeftSide.removeFirst() }
         gameLevel.tables.right.foodBoxes.forEach { it.containedIngredient = putOnRightSide.removeFirst() }
-
 
     }
 }
