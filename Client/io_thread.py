@@ -13,7 +13,6 @@ class IOThread(threading.Thread):
         self.done = False
 
     def run(self):
-        from game import game_over
         while not self.done:
             try:
                 recv = communication.read()
@@ -22,9 +21,10 @@ class IOThread(threading.Thread):
                 if cmd == ReceiveCommand.UPDATE_STATE:
                     self.game.state = parse_state(communication.jdec.decode(data))
                 elif cmd == ReceiveCommand.GAME_OVER:
-                    game_over()
+                    self.game.game_over()
                     return
                 elif cmd == ReceiveCommand.GAME_ABORTED:
+                    self.game.game_disconnect()
                     return
             except TimeoutError:
                 return

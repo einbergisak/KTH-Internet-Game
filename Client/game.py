@@ -11,10 +11,6 @@ from io_thread import IOThread
 from packet import Packet
 
 
-def game_over():
-    print("todo")
-
-
 def handle_input():
     active_keys = pg.key.get_pressed()
     cmd: SendCommand | None = None
@@ -45,6 +41,7 @@ def handle_input():
 class Game:
     state: GameState | None = None
     clock = pg.time.Clock()
+    other_disconnected = False
 
     def __init__(self):
         self.graphics = Graphics(self)
@@ -55,7 +52,7 @@ class Game:
                 return False
 
             # Show on screen that you are connected and waiting for other player.
-            self.graphics.edit_menu_text("Connected succesfully! Waiting for game start..")
+            self.graphics.edit_menu_text("Connected! Waiting for game to start..")
             self.graphics.draw_menu()
 
             while True:
@@ -74,23 +71,42 @@ class Game:
                 elif cmd == ReceiveCommand.GAME_ABORTED:
                     return False
 
+    def game_over(self):
+        self.graphics.show_game_over_screen()
+
+    def game_disconnect(self):
+        self.other_disconnected = True
+        self.graphics.show_disconnected_screen()
+
     def update(self):
         thread = IOThread(self)
         thread.start()
         done = False
         while not done:
+            if not thread.is_alive():
+                print("thread dead")
+                break
+
+            handle_input()
+
+            self.graphics.draw_game()
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     done = True
                 if event.type == pg.KEYDOWN:
-                    if pg.key.get_pressed()[pg.K_SPACE]:
+                    pressed = pg.key.get_pressed()
+                    if pressed[pg.K_SPACE]:
                         communication.send(Packet(SendCommand.INTERACT_WITH_FOOD_BOX, ""))
+                    elif pressed[pg.K_ESCAPE]:
+                        communication.send(Packet(SendCommand.DISCONNECTED, ""))
+                        done = True
+                        break
 
-            if not thread.is_alive():
-                print("thread dead")
-                break
-            handle_input()
-            self.graphics.draw_game()
             self.clock.tick(60)
+        if self.other_disconnected:
+            self.graphics.show_disconnected_screen()
+            sleep(3)
+
         # Send DC TODO
         thread.done = True
