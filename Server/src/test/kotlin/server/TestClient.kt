@@ -19,5 +19,8 @@ fun main() {
 //    val d = fmt.encodeToString(ss)
 //    println(d)
 
+    val b = List<Int>(3) {index -> index}
+    b.forEach(::println)
+
 
 }

@@ -10,10 +10,11 @@ class IOThread(threading.Thread):
     def __init__(self, game):
         threading.Thread.__init__(self)
         self.game = game
+        self.done = False
 
     def run(self):
         from game import game_over
-        while True:
+        while not self.done:
             try:
                 recv = communication.read()
                 cmd = recv["command"]

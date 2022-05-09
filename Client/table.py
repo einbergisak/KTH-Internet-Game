@@ -16,3 +16,6 @@ class Tables:
     left: Table
     right: Table
     main: Table
+
+    def get_all(self) -> [Table]:
+        return [self.left, self.right, self.main]

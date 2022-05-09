@@ -11,7 +11,7 @@ import server.Timer
 class GameState(val gameLevel: GameLevel, val players: Pair<Player, Player>) {
     var gameStartTime: Timer = Timer()
     var remainingRecipes: MutableList<Recipe> = Recipe.RECIPES.shuffled().toMutableList()
-    var currentRecipes: Pair<Recipe, Recipe> = remainingRecipes.removeLast() to remainingRecipes.removeLast()
+    lateinit var currentRecipes: Pair<Recipe, Recipe>
     var pointsEarned: Int = 0
     var status = Status.PRE_GAME
     val timeRemaining: Long
@@ -92,7 +92,6 @@ fun checkRecipeCompleted() {
             Server.gameState.showNextRecipe()
         }
     }
-
 }
 
 

@@ -30,7 +30,7 @@ def parse_tables(tables: dict) -> Tables:
 def parse_foodboxes(foodboxes: [dict]):
     list: [FoodBox] = []
     for fb in foodboxes:
-        pos = Pos(fb["pos"]["x"], fb["pos"]["y"])
+        pos = Pos(fb["pos"]["x"], fb["pos"]["y"]+HEADER_HEIGHT)
         list.append(FoodBox(pos, fb["containedIngredient"]))
     return list
 

@@ -113,6 +113,7 @@ object Server {
         gameState = GameState(
             GameLevel(), players
         )
+        gameState.showNextRecipe()
     }
 
     /**

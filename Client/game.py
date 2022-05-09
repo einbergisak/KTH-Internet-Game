@@ -36,10 +36,6 @@ def handle_input():
     if active_keys[pg.K_a]:
         cmd = SendCommand.MOVE
         data = "LEFT"
-    # Interact with FoodBox
-    if active_keys[pg.K_SPACE]:
-        cmd = SendCommand.INTERACT_WITH_FOOD_BOX
-        data = ""
 
     if cmd is not None:
         packet = Packet(cmd, data)
@@ -86,6 +82,9 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     done = True
+                if event.type == pg.KEYDOWN:
+                    if pg.key.get_pressed()[pg.K_SPACE]:
+                        communication.send(Packet(SendCommand.INTERACT_WITH_FOOD_BOX, ""))
 
             if not thread.is_alive():
                 print("thread dead")
@@ -93,3 +92,5 @@ class Game:
             handle_input()
             self.graphics.draw_game()
             self.clock.tick(60)
+        # Send DC TODO
+        thread.done = True

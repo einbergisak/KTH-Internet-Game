@@ -41,7 +41,7 @@ fun SocketAddress.send(command: SendCommand, data: Data) {
     val packet = DatagramPacket(sendData, buf.size, this)
     Server.socket.send(packet)
     // TODO: 2022-05-01 DEBUG PRINT TO REMOVE
-//    println("Sending Packet $p as DatagramPacket $packet")
+    println("Sending Packet $p as DatagramPacket $packet")
 }
 
 /**

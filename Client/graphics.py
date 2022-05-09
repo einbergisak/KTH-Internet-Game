@@ -1,9 +1,10 @@
 import pygame as pg
 import pygame_textinput as pgt
 
-from assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER1_IMAGE
+import ingredient
+from assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER1_IMAGE, FOODBOX_IMAGE
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, GAME_BACKGROUND_COLOR, HEADER_HEIGHT, \
-    INGREDIENT_COLOR, RECIPE_TEXT_SIZE, INGREDIENT_TEXT_SIZE, GAME_WIDTH, GAME_HEIGHT, RECIPE_COLOR
+    INGREDIENT_COLOR, RECIPE_TEXT_SIZE, INGREDIENT_TEXT_SIZE, GAME_WIDTH, GAME_HEIGHT, RECIPE_COLOR, TABLE_WIDTH
 
 font = pg.font.Font(None, 64)
 
@@ -57,18 +58,36 @@ class Graphics:
         if self.game.state is None:
             self.screen.blit(recipe_name_font.render("Awaiting server...", True, RECIPE_COLOR), (30, 30))
         else:
-            for i, recipe in enumerate([self.game.state.recipe1, self.game.state.recipe2]):
-                recipe_name = recipe_name_font.render(recipe.name, True, RECIPE_COLOR)
-                self.screen.blit(recipe_name, (30+i*SCREEN_WIDTH/2, 30))
-                for n, ingredient in enumerate(recipe.ingredients):
-                    self.screen.blit(ingredient_font.render(ingredient, True, INGREDIENT_COLOR), (50+i*SCREEN_WIDTH/2, 50+n*INGREDIENT_TEXT_SIZE))
 
+            # Tables
             self.screen.blit(SIDE_TABLE_IMAGE, self.game.state.tables.left.pos.as_tuple())
             self.screen.blit(SIDE_TABLE_IMAGE, self.game.state.tables.right.pos.as_tuple())
             self.screen.blit(MAIN_TABLE_IMAGE, self.game.state.tables.main.pos.as_tuple())
 
+            # Players
             self.screen.blit(PLAYER1_IMAGE, self.game.state.player1.pos.as_tuple())
             self.screen.blit(PLAYER1_IMAGE, self.game.state.player2.pos.as_tuple())
+
+            # Recipes
+            for i, recipe in enumerate([self.game.state.recipe1, self.game.state.recipe2]):
+                recipe_name = recipe_name_font.render(recipe.name, True, RECIPE_COLOR)
+                recipe_score = recipe_name_font.render(f"{recipe.value()}p", True, (255, 0, 30))
+                recipe_pos = rx, ry = (TABLE_WIDTH+30+i*SCREEN_WIDTH/2, 15)
+                self.screen.blit(recipe_score, (rx - 40, ry))
+                self.screen.blit(recipe_name, recipe_pos)
+                for n, ing in enumerate(recipe.ingredients):
+                    self.screen.blit(ingredient_font.render(f"- {ing}", True, INGREDIENT_COLOR), (rx+10, ry+(n+1)*INGREDIENT_TEXT_SIZE/1.2+5))
+
+            # FooxBoxes & Ingredients
+            for table in self.game.state.tables.get_all():
+                for box in table.food_boxes:
+                    ing = box.ingredient
+                    self.screen.blit(FOODBOX_IMAGE, box.pos.as_tuple())
+                    if ing is not None:
+                        img = ingredient.get_ingredient_image(ing)
+                        x, y = box.pos.as_tuple()
+                        ing_pos = x+10, y+10
+                        self.screen.blit(img, ing_pos)
 
         pg.display.update()
 
