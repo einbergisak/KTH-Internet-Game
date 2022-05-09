@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from ingredient import Ingredient
+from _game.content.ingredient import Ingredient
 
 
 @dataclass

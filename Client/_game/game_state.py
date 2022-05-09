@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from player import Player
-from recipe import Recipe
-from table import Table, Tables
+from _game.content.player import Player
+from _game.content.recipe import Recipe
+from _game.content.table import Tables
 
 
 @dataclass

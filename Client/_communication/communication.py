@@ -2,9 +2,9 @@ import json
 import socket
 from time import sleep
 
-import config
-from command import ReceiveCommand, SendCommand
-from packet import Packet
+from _game import config
+from _communication.command import ReceiveCommand, SendCommand
+from _communication.packet import Packet
 
 SERVER_IP = "192.168.56.1"
 SERVER_PORT = 25565
@@ -45,10 +45,9 @@ def connect(ctx, name: str) -> bool:
 
     # Send connection request
     send(packet)
-    print(sckt.getblocking())
 
     # Read feedback
-
+    sleep(0.2)
     try:
         recv = read()
 

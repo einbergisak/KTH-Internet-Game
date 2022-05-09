@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 import pygame as pg
 
-from ingredient import Ingredient
-from pos import Pos
+from _game.content.ingredient import Ingredient
+from _game.content.pos import Pos
 
 
 @dataclass

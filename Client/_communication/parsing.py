@@ -1,10 +1,10 @@
-from config import HEADER_HEIGHT
-from food_box import FoodBox
-from game_state import GameState
-from player import Player
-from pos import Pos
-from recipe import Recipe
-from table import Table, Tables
+from _game.config import HEADER_HEIGHT
+from _game.content.food_box import FoodBox
+from _game.game_state import GameState
+from _game.content.player import Player
+from _game.content.pos import Pos
+from _game.content.recipe import Recipe
+from _game.content.table import Table, Tables
 
 
 def parse_tables(tables: dict) -> Tables:

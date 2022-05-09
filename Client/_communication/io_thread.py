@@ -1,9 +1,9 @@
 import threading
 from asyncio import sleep
 
-import communication
-from command import ReceiveCommand
-from parsing import parse_state
+import _communication.communication as comm
+from _communication.command import ReceiveCommand
+from _communication.parsing import parse_state
 
 
 class IOThread(threading.Thread):
@@ -15,11 +15,11 @@ class IOThread(threading.Thread):
     def run(self):
         while not self.done:
             try:
-                recv = communication.read()
+                recv = comm.read()
                 cmd = recv["command"]
                 data = recv["data"]
                 if cmd == ReceiveCommand.UPDATE_STATE:
-                    self.game.state = parse_state(communication.jdec.decode(data))
+                    self.game.state = parse_state(comm.jdec.decode(data))
                 elif cmd == ReceiveCommand.GAME_OVER:
                     self.game.game_over()
                     return

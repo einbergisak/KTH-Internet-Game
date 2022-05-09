@@ -2,7 +2,7 @@ from enum import Enum
 
 from pygame.surface import Surface
 
-from assets import Bacon_IMAGE, Egg_IMAGE, Milk_IMAGE, Flour_IMAGE, Cheese_IMAGE, Cream_IMAGE, Pasta_IMAGE, \
+from _game.content.visual.assets import Bacon_IMAGE, Egg_IMAGE, Milk_IMAGE, Flour_IMAGE, Cheese_IMAGE, Cream_IMAGE, Pasta_IMAGE, \
     BakingPowder_IMAGE, Sugar_IMAGE, Butter_IMAGE, Salt_IMAGE, Pepper_IMAGE, Onion_IMAGE, Potato_IMAGE, Basil_IMAGE, \
     Nuts_IMAGE, Oil_IMAGE, Tomato_IMAGE, Garlic_IMAGE, Parsley_IMAGE, ChiliPepper_IMAGE
 

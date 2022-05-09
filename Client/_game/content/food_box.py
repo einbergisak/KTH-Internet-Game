@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from ingredient import Ingredient
-from pos import Pos
+from _game.content.ingredient import Ingredient
+from _game.content.pos import Pos
 
 
 @dataclass

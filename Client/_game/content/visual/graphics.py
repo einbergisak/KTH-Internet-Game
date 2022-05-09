@@ -1,10 +1,9 @@
 import pygame as pg
 import pygame_textinput as pgt
 
-import game
-import ingredient
-from assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER1_IMAGE, FOODBOX_IMAGE
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, GAME_BACKGROUND_COLOR, HEADER_HEIGHT, \
+import _game.content.ingredient as ingredient
+from _game.content.visual.assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER1_IMAGE, FOODBOX_IMAGE
+from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, GAME_BACKGROUND_COLOR, HEADER_HEIGHT, \
     INGREDIENT_COLOR, RECIPE_FONT_SIZE, INGREDIENT_TEXT_SIZE, GAME_WIDTH, GAME_HEIGHT, RECIPE_COLOR, TABLE_WIDTH, \
     TIMER_FONT_SIZE, POPUP_FONT_SIZE
 
@@ -22,7 +21,7 @@ class Graphics:
     pg.display.set_caption("INET")
     _default_menu_text = font.render(f"Enter your name:", True, (40, 40, 40))
     menu_text = _default_menu_text
-    textinput = pgt.TextInputVisualizer(font_object=font)
+    text_input = pgt.TextInputVisualizer(font_object=font)
 
     def __init__(self, game):
         self.game = game
@@ -35,17 +34,17 @@ class Graphics:
         menu_text_y = SCREEN_HEIGHT / 3
         self.screen.fill((250, 250, 250))
         self.screen.blit(self.menu_text, (menu_text_x, menu_text_y - 50.0))
-        self.screen.blit(self.textinput.surface, (menu_text_x, menu_text_y))
+        self.screen.blit(self.text_input.surface, (menu_text_x, menu_text_y))
         pg.display.update()
 
     def show_menu(self):
         self.menu_text = self._default_menu_text
         while True:
             events = pg.event.get()
-            self.textinput.update(events)
+            self.text_input.update(events)
 
             if pg.key.get_pressed()[pg.K_RETURN]:
-                return self.textinput.value
+                return self.text_input.value
 
             self.draw_menu()
 
@@ -84,7 +83,7 @@ class Graphics:
                     self.screen.blit(ingredient_font.render(f"- {ing}", True, INGREDIENT_COLOR),
                                      (recipe_x + 10, recipe_y + (n + 1) * INGREDIENT_TEXT_SIZE / 1.2 + 5))
 
-            # FooxBoxes & Ingredients
+            # FoodBoxes & Ingredients
             for table in self.game.state.tables.get_all():
                 for box in table.food_boxes:
                     ing = box.ingredient
@@ -99,7 +98,11 @@ class Graphics:
             # Timer
             seconds = self.game.state.time_remaining % 60
             minutes = int(self.game.state.time_remaining / 60)
-            timer_text = timer_font.render(f"{minutes}:{seconds}", True, (0, 0, 0))
+            if seconds > 9:
+                text = f"{minutes}:{seconds}"
+            else:
+                text = f"{minutes}:0{seconds}"
+            timer_text = timer_font.render(text, True, (0, 0, 0))
             timer_pos = (SCREEN_WIDTH / 2 - TIMER_FONT_SIZE * 2, HEADER_HEIGHT - TIMER_FONT_SIZE)
             self.screen.blit(timer_text, timer_pos)
 

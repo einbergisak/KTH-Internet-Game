@@ -1,6 +1,6 @@
 import pygame as pg
 
-from game import Game
+from _game.game import Game
 
 pg.init()
 g = Game()

@@ -2,13 +2,12 @@ from time import sleep
 
 import pygame as pg
 
-import communication
-from command import ReceiveCommand, SendCommand
-from config import FRAMERATE
-from game_state import GameState
-from graphics import Graphics
-from io_thread import IOThread
-from packet import Packet
+from _communication import communication
+from _communication.command import ReceiveCommand, SendCommand
+from _game.game_state import GameState
+from _game.content.visual.graphics import Graphics
+from _communication.io_thread import IOThread
+from _communication.packet import Packet
 
 
 def handle_input():
@@ -21,27 +20,27 @@ def handle_input():
         cmd = SendCommand.MOVE
         data = "UP"
     # Right
-    if active_keys[pg.K_d]:
+    elif active_keys[pg.K_d]:
         cmd = SendCommand.MOVE
         data = "RIGHT"
     # Down
-    if active_keys[pg.K_s]:
+    elif active_keys[pg.K_s]:
         cmd = SendCommand.MOVE
         data = "DOWN"
     # Left
-    if active_keys[pg.K_a]:
+    elif active_keys[pg.K_a]:
         cmd = SendCommand.MOVE
         data = "LEFT"
 
-    if cmd is not None:
-        packet = Packet(cmd, data)
-        communication.send(packet)
+    packet = Packet(cmd, data)
+    communication.send(packet)
 
 
 class Game:
     state: GameState | None = None
     clock = pg.time.Clock()
     other_disconnected = False
+    game_is_over = False
 
     def __init__(self):
         self.graphics = Graphics(self)
@@ -72,6 +71,7 @@ class Game:
                     return False
 
     def game_over(self):
+        self.game_is_over = True
         self.graphics.show_game_over_screen()
 
     def game_disconnect(self):
@@ -103,10 +103,12 @@ class Game:
                         done = True
                         break
 
-            self.clock.tick(60)
+            self.clock.tick(30)
         if self.other_disconnected:
             self.graphics.show_disconnected_screen()
             sleep(3)
+        elif self.game_is_over:
+            self.graphics.show_game_over_screen()
+            sleep(3)
 
-        # Send DC TODO
         thread.done = True
