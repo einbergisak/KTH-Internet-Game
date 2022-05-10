@@ -2,7 +2,8 @@ import pygame as pg
 import pygame_textinput as pgt
 
 import _game.content.ingredient as ingredient
-from _game.content.visual.assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER1_IMAGE, FOODBOX_IMAGE
+from _game.content.player import Player
+from _game.content.visual.assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER_IMAGES, FOODBOX_IMAGE
 from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, GAME_BACKGROUND_COLOR, HEADER_HEIGHT, \
     INGREDIENT_COLOR, RECIPE_FONT_SIZE, INGREDIENT_TEXT_SIZE, GAME_WIDTH, GAME_HEIGHT, RECIPE_COLOR, TABLE_WIDTH, \
     TIMER_FONT_SIZE, POPUP_FONT_SIZE
@@ -48,6 +49,18 @@ class Graphics:
 
             self.draw_menu()
 
+    def draw_players(self):
+        for i, player in enumerate([self.game.state.player1, self.game.state.player2]):
+            player_img = PLAYER_IMAGES[i]
+            if player.carriedIngredient is not None:
+                ingredient_img = ingredient.get_ingredient_image(player.carriedIngredient)
+                player_img.blit(ingredient_img, (28, 17))
+
+            if player.orientation == "Left":
+                player_img = pg.transform.flip(player_img, True, False)
+
+            self.screen.blit(player_img, player.pos.as_tuple())
+
     def draw_game(self):
         header = pg.Surface((SCREEN_WIDTH, HEADER_HEIGHT))
         header.fill(HEADER_BACKGROUND_COLOR)
@@ -68,8 +81,7 @@ class Graphics:
             self.screen.blit(MAIN_TABLE_IMAGE, self.game.state.tables.main.pos.as_tuple())
 
             # Players
-            self.screen.blit(PLAYER1_IMAGE, self.game.state.player1.pos.as_tuple())
-            self.screen.blit(PLAYER1_IMAGE, self.game.state.player2.pos.as_tuple())
+            self.draw_players()
 
             # Recipes
             for i, recipe in enumerate([self.game.state.recipe1, self.game.state.recipe2]):

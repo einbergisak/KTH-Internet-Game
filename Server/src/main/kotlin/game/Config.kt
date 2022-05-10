@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 const val MAIN_TABLE_OCCUPIES_ENTIRE_HEIGHT = true // Implemented due to uncertainty regarding project criteria
 const val GAME_WIDTH = 1200
 const val GAME_HEIGHT = 700
-const val PLAYER_VEL = 15
+const val PLAYER_VEL = 10
 const val MIN_X = 0
 const val MAX_X = GAME_WIDTH - 1
 const val MIN_Y = 0
@@ -28,7 +28,7 @@ val PLAYER1_START_POS = Pos(MIN_X + SIDE_TABLE_WIDTH*2, MAX_Y / 2)
 val PLAYER2_START_POS = Pos(GAME_WIDTH - SIDE_TABLE_WIDTH*2 - PLAYER_SIZE, MAX_Y / 2)
 const val GAME_DURATION
         /** In seconds */
-        : Long = 120
+        : Long = 60
 val LEFT_TABLE = Table(
     Rect(
         LEFT_TABLE_POS,

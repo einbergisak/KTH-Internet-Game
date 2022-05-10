@@ -1,12 +1,12 @@
+import os
+
 import pygame as pg
 
-from _game.config import INGREDIENT_SIZE, TABLE_WIDTH, GAME_HEIGHT, MAIN_TABLE_HEIGHT, RECIPE_FONT_SIZE, INGREDIENT_TEXT_SIZE
+from _game.config import TABLE_WIDTH, GAME_HEIGHT, MAIN_TABLE_HEIGHT
 
-PLAYER1_IMAGE = pg.Surface((80, 80))
-PLAYER1_IMAGE.fill((180, 20, 40))
-
-PLAYER2_IMAGE = pg.Surface((80, 80))
-PLAYER2_IMAGE.fill((180, 20, 40))
+PLAYER1_IMAGE = pg.image.load(os.path.join('resources', 'player1.png'))
+PLAYER2_IMAGE = pg.image.load(os.path.join('resources', 'player2.png'))
+PLAYER_IMAGES = [PLAYER1_IMAGE, PLAYER2_IMAGE]
 
 FOODBOX_IMAGE = pg.Surface((TABLE_WIDTH, TABLE_WIDTH))
 FOODBOX_IMAGE.fill((90, 50, 0))
@@ -15,6 +15,8 @@ SIDE_TABLE_IMAGE = pg.Surface((TABLE_WIDTH, GAME_HEIGHT))
 SIDE_TABLE_IMAGE.fill((120, 100, 0))
 MAIN_TABLE_IMAGE = pg.Surface((TABLE_WIDTH*2, MAIN_TABLE_HEIGHT))
 MAIN_TABLE_IMAGE.fill((120, 100, 0))
+
+INGREDIENT_SIZE = 50
 
 Bacon_IMAGE = pg.Surface((INGREDIENT_SIZE, INGREDIENT_SIZE))
 Egg_IMAGE = pg.Surface((INGREDIENT_SIZE, INGREDIENT_SIZE))

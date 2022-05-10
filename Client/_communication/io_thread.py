@@ -19,7 +19,11 @@ class IOThread(threading.Thread):
                 cmd = recv["command"]
                 data = recv["data"]
                 if cmd == ReceiveCommand.UPDATE_STATE:
-                    self.game.state = parse_state(comm.jdec.decode(data))
+                    if self.game.state is not None:
+                        players = [self.game.state.player1, self.game.state.player2]
+                    else:
+                        players = []
+                    self.game.state = parse_state(comm.jdec.decode(data), players)
                 elif cmd == ReceiveCommand.GAME_OVER:
                     self.game.game_over()
                     return

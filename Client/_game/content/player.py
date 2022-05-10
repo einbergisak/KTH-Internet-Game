@@ -10,7 +10,9 @@ from _game.content.pos import Pos
 class Player:
     pos: Pos
     name: str
+    orientation: str
     surface = pg.Surface((50, 50))
     carriedIngredient: Ingredient | None = None
+
 
     surface.fill((140, 0, 0))

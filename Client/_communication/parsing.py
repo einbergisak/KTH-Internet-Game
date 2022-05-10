@@ -35,20 +35,34 @@ def parse_foodboxes(foodboxes: [dict]):
     return list
 
 
-def parse_players(players: dict):
-    p1 = players["first"]
-    p1pos = Pos(p1["pos"]["x"], p1["pos"]["y"] + HEADER_HEIGHT)
-    player1 = Player(p1pos, p1["name"])
+def parse_player(player: dict, old_player: Player | None):
 
-    p2 = players["second"]
-    p2pos = Pos(p2["pos"]["x"], p2["pos"]["y"] + HEADER_HEIGHT)
-    player2 = Player(p2pos, p2["name"])
+    player_x, player_y = player["pos"]["x"], player["pos"]["y"] + HEADER_HEIGHT
+    player_pos = Pos(player_x, player_y)
+
+    if old_player is None or old_player.pos.x < player_x:
+        player_orientation = "Right"
+    elif old_player.pos.x > player_x:
+        player_orientation = "Left"
+    else:
+        player_orientation = old_player.orientation
+
+    return Player(pos=player_pos, name=player["name"], orientation=player_orientation)
+
+
+def parse_players(players: dict, old_players):
+    if len(old_players) != 0:
+        player1 = parse_player(players["first"], old_players[0])
+        player2 = parse_player(players["second"], old_players[1])
+    else:
+        player1 = parse_player(players["first"], None)
+        player2 = parse_player(players["second"], None)
 
     return player1, player2
 
 
-def parse_state(data: dict):
-    player1, player2 = parse_players(data["players"])
+def parse_state(data: dict, players) -> GameState:
+    player1, player2 = parse_players(data["players"], players)
     r1 = data["currentRecipes"]["first"]
     r2 = data["currentRecipes"]["second"]
     recipe1 = Recipe(r1["name"], r1["ingredients"])
