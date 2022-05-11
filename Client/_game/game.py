@@ -6,38 +6,10 @@ from _communication import communication
 from _communication.command import ReceiveCommand, SendCommand
 from _communication.io_thread import IOThread
 from _communication.packet import Packet
+from _game.config import FRAMERATE
 from _game.content.visual.graphics import Graphics
 from _game.game_state import GameState
-
-
-def handle_input() -> bool:
-    active_keys = pg.key.get_pressed()
-    cmd: SendCommand | None = None
-    data: str | None = None
-
-    # Up
-    if active_keys[pg.K_w]:
-        cmd = SendCommand.MOVE
-        data = "UP"
-    # Right
-    elif active_keys[pg.K_d]:
-        cmd = SendCommand.MOVE
-        data = "RIGHT"
-    # Down
-    elif active_keys[pg.K_s]:
-        cmd = SendCommand.MOVE
-        data = "DOWN"
-    # Left
-    elif active_keys[pg.K_a]:
-        cmd = SendCommand.MOVE
-        data = "LEFT"
-
-    if cmd is not None:
-        packet = Packet(cmd, data)
-        communication.send(packet)
-        return True
-    else:
-        return False
+from _game.keyboard_input import handle_movement_input
 
 
 class Game:
@@ -50,6 +22,9 @@ class Game:
         self.graphics = Graphics(self)
 
     def init(self, name: str) -> bool:
+        """
+            Waits for the game to be started by the server.
+        """
         while True:
             if not communication.connect(self, name):
                 return False
@@ -71,7 +46,7 @@ class Game:
                 if cmd == ReceiveCommand.START_GAME:
                     communication.send(Packet(SendCommand.GAME_STARTED, ""))
                     return True
-                elif cmd == ReceiveCommand.GAME_ABORTED:
+                else:
                     return False
 
     def game_over(self):
@@ -83,14 +58,19 @@ class Game:
         self.graphics.show_disconnected_screen()
 
     def update(self):
+        """
+            Updates the game every tick, rendering graphics and sending data to the server.
+        """
         thread = IOThread(self)
         thread.start()
         done = False
+
+        # Update each tick
         while not done:
             if not thread.is_alive():
                 break
 
-            handle_input()
+            handle_movement_input()
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -104,7 +84,7 @@ class Game:
                         break
 
             self.graphics.draw_game()
-            self.clock.tick(60)
+            self.clock.tick(FRAMERATE)
         if self.other_disconnected:
             self.graphics.show_disconnected_screen()
             sleep(3)

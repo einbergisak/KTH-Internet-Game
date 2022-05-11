@@ -1,19 +1,22 @@
 from _game.config import HEADER_HEIGHT
 from _game.content.food_box import FoodBox
-from _game.game_state import GameState
 from _game.content.player import Player
 from _game.content.pos import Pos
 from _game.content.recipe import Recipe
 from _game.content.table import Table, Tables
+from _game.game_state import GameState
+
+"""
+    This file contains JSON parsing functions for different classes.
+"""
 
 
 def parse_tables(tables: dict) -> Tables:
-
     for name, t in tables.items():
         x1 = t["bounds"]["topleft"]["x"]
         x2 = t["bounds"]["botright"]["x"]
-        y1 = t["bounds"]["topleft"]["y"]+HEADER_HEIGHT
-        width = x2-x1
+        y1 = t["bounds"]["topleft"]["y"] + HEADER_HEIGHT
+        width = x2 - x1
         pos = Pos(x1, y1)
         food_boxes = parse_foodboxes(t["foodBoxes"])
         table = Table(pos, width, food_boxes)
@@ -30,13 +33,12 @@ def parse_tables(tables: dict) -> Tables:
 def parse_foodboxes(foodboxes: [dict]):
     list: [FoodBox] = []
     for fb in foodboxes:
-        pos = Pos(fb["pos"]["x"], fb["pos"]["y"]+HEADER_HEIGHT)
+        pos = Pos(fb["pos"]["x"], fb["pos"]["y"] + HEADER_HEIGHT)
         list.append(FoodBox(pos, fb["containedIngredient"]))
     return list
 
 
 def parse_player(player: dict, old_player: Player | None):
-
     player_x, player_y = player["pos"]["x"], player["pos"]["y"] + HEADER_HEIGHT
     player_pos = Pos(player_x, player_y)
 
@@ -49,7 +51,8 @@ def parse_player(player: dict, old_player: Player | None):
     else:
         player_orientation = old_player.orientation
 
-    return Player(pos=player_pos, name=player["name"], orientation=player_orientation, carriedIngredient=carried_ingredient)
+    return Player(pos=player_pos, name=player["name"], orientation=player_orientation,
+                  carriedIngredient=carried_ingredient)
 
 
 def parse_players(players: dict, old_players):
@@ -70,7 +73,8 @@ def parse_state(data: dict, players) -> GameState:
     recipe1 = Recipe(r1["name"], r1["ingredients"])
     recipe2 = Recipe(r2["name"], r2["ingredients"])
     bounds = data["gameLevel"]["gameBounds"]
-    game_bounds = ((bounds["topleft"]["x"], bounds["topleft"]["y"]+HEADER_HEIGHT), (bounds["botright"]["x"], bounds["botright"]["y"]+HEADER_HEIGHT))
+    game_bounds = ((bounds["topleft"]["x"], bounds["topleft"]["y"] + HEADER_HEIGHT),
+                   (bounds["botright"]["x"], bounds["botright"]["y"] + HEADER_HEIGHT))
     tables = parse_tables(data["gameLevel"]["tables"])
     points = data["pointsEarned"]
     time_remaining = data["timeRemaining"]

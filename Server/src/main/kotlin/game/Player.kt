@@ -56,14 +56,15 @@ data class Player(
      */
     fun move(direction: Direction) {
         val otherPlayer =
-            (if (this === Server.connections.player1?.player) Server.connections.player2?.player else Server.connections.player1?.player) ?: return
+            (if (this === Server.connections.player1?.player) Server.connections.player2?.player else Server.connections.player1?.player)
+                ?: return
 
         // The other player is added to the list of collidable objects if game settings allow them to cross the table
         val objects = Server.gameState.gameLevel.tables.getAll().toMutableList<Bounded>().also { it.add(otherPlayer) }
 
         // Movement + Collision detection: Checks for each object's bound if it overlaps the player's bound
 
-        Outer@for (step in 0 until PLAYER_VEL) {
+        Outer@ for (step in 0 until PLAYER_VEL) {
             val before = pos.copy()
             when (direction) {
                 Direction.UP -> {

@@ -3,7 +3,6 @@ package game
 import server.SendState
 import server.Server
 import server.Timer
-import javax.tools.JavaCompiler
 
 
 /**
@@ -48,7 +47,7 @@ class GameState(val gameLevel: GameLevel, val players: Pair<Player, Player>) {
         val putOnRightSide = mutableListOf<Ingredient>()
 
         // Distributes the ingredients evenly on each side.
-        while (ing1.isNotEmpty() || ing2.isNotEmpty()){
+        while (ing1.isNotEmpty() || ing2.isNotEmpty()) {
             ing1.removeFirstOrNull()?.let { putOnLeftSide.add(it) }
             ing1.removeFirstOrNull()?.let { putOnRightSide.add(it) }
             ing2.removeFirstOrNull()?.let { putOnLeftSide.add(it) }

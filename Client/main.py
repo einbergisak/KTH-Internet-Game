@@ -2,9 +2,11 @@ import pygame as pg
 
 from _game.game import Game
 
+# Initialize PyGame
 pg.init()
-g = Game()
 
+# Initialize game
+g = Game()
 
 if __name__ == '__main__':
 
@@ -15,9 +17,3 @@ if __name__ == '__main__':
 
     # Game started, move from menu to game
     g.update()
-
-
-
-
-
-

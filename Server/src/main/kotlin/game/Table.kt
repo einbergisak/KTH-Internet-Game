@@ -24,16 +24,19 @@ data class Table(override val bounds: Rect, var foodBoxes: List<FoodBox>) : Boun
          */
         fun getPositionedFoodBoxes(bounds: Rect, isMain: Boolean = false): List<FoodBox> {
             val height = if (isMain) MAIN_TABLE_HEIGHT else SIDE_TABLE_HEIGHT
-            val gap = height - FOODBOX_SIZE*FOODBOXES_PER_TABLE
-            val spacing = {index: Int ->
-                (index % FOODBOXES_PER_TABLE + 1) * gap / (FOODBOXES_PER_TABLE+1)
+            val gap = height - FOODBOX_SIZE * FOODBOXES_PER_TABLE
+            val spacing = { index: Int ->
+                (index % FOODBOXES_PER_TABLE + 1) * gap / (FOODBOXES_PER_TABLE + 1)
             }
             return if (isMain) {
                 List(FOODBOXES_PER_TABLE) { index ->
                     FoodBox(Pos(bounds.topleft.x, bounds.topleft.y + FOODBOX_SIZE * index + spacing(index)), null)
                 } + List(FOODBOXES_PER_TABLE) { index ->
                     FoodBox(
-                        Pos(bounds.topleft.x + MAIN_TABLE_WIDTH/2, bounds.topleft.y + FOODBOX_SIZE * index + spacing(index+FOODBOXES_PER_TABLE)),
+                        Pos(
+                            bounds.topleft.x + MAIN_TABLE_WIDTH / 2,
+                            bounds.topleft.y + FOODBOX_SIZE * index + spacing(index + FOODBOXES_PER_TABLE)
+                        ),
                         null
                     )
                 }

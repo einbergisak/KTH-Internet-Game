@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.lang.Thread.sleep
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -22,8 +21,7 @@ object Server {
     @JvmStatic
     fun main(args: Array<String>) {
         runBlocking(Dispatchers.IO) {
-            println(InetAddress.getLocalHost())
-            println(InetAddress.getByName(SERVER_IP))
+            println("Server started.")
             socket = DatagramSocket(SERVER_PORT, InetAddress.getByName(SERVER_IP))
             while (true) {
                 init()
@@ -78,7 +76,6 @@ object Server {
                 }
             } else continue
         }
-        println("Both players are connected. Starting game.")
         gameState.status = Status.IN_GAME
     }
 
@@ -94,7 +91,7 @@ object Server {
             return
         }
 
-        if (connections.getTimedOut() != null){
+        if (connections.getTimedOut() != null) {
             gameState.status = Status.ABORTED
             return
         }

@@ -2,9 +2,9 @@ import json
 import socket
 from time import sleep
 
-from _game import config
 from _communication.command import ReceiveCommand, SendCommand
 from _communication.packet import Packet
+from _game import config
 
 SERVER_IP = "192.168.56.1"
 SERVER_PORT = 25565
@@ -17,10 +17,11 @@ sckt.settimeout(config.SECONDS_UNTIL_TIMEOUT)
 jenc = json.encoder.JSONEncoder()
 jdec = json.JSONDecoder()
 
-print(jenc.encode(Packet("CMD", "Data").json()))
-
 
 def as_json_string(name: str, val: str):
+    """
+        Creates a corresponding JSON string "{name: val}"
+    """
     packet = {
         name: val
     }
@@ -28,6 +29,9 @@ def as_json_string(name: str, val: str):
 
 
 def send(packet: Packet):
+    """
+        Sends the given packet to the server.
+    """
     sckt.sendto(str.encode(packet.json()), SERVER)
 
 
@@ -41,6 +45,9 @@ def read() -> dict:
 
 
 def connect(ctx, name: str) -> bool:
+    """
+        Attempts to connect to the server.
+    """
     packet = Packet(SendCommand.CONNECTION_REQUEST, name)
 
     # Send connection request
@@ -52,7 +59,6 @@ def connect(ctx, name: str) -> bool:
         recv = read()
 
         cmd = recv["command"]
-        print(f"Received: {cmd}")
         if cmd == ReceiveCommand.CONNECTION_ACCEPTED:
             return True
         elif cmd == ReceiveCommand.CONNECTION_DENIED:

@@ -6,6 +6,10 @@ from _communication.parsing import parse_state
 
 
 class IOThread(threading.Thread):
+    """
+        Handles input sent from the server.
+    """
+
     def __init__(self, game):
         threading.Thread.__init__(self)
         self.game = game

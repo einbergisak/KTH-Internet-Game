@@ -20,7 +20,7 @@ data class Rect(var topleft: Pos, var botright: Pos) {
         }
 
         // Disjunction on y-axis
-        if (other.topleft.y > botright.y || topleft.y  > other.botright.y ) {
+        if (other.topleft.y > botright.y || topleft.y > other.botright.y) {
             return false
         }
 

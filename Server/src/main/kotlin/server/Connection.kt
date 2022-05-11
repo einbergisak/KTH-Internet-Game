@@ -5,7 +5,6 @@ import game.Status
 import game.fmt
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.net.SocketAddress
 
 /**
@@ -88,14 +87,13 @@ fun newConnection(): Pair<String, SocketAddress> {
 
         // If data recieved does not conform to the protocol, try again
         val (pckt, addr) = datagram.extractWithAddress() ?: continue
-        println("Extracted $pckt succesfully in newConnection()")
         if (pckt.command == ReceiveCommand.CONNECTION_REQUEST) {
             val name = pckt.data
             // Makes sure that the same client is not attempting to connect twice.
-            if (addr.isCurrentPlayer()){
+            if (addr.isCurrentPlayer()) {
                 addr.send(SendCommand.CONNECTION_DENIED)
                 continue
-            }else {
+            } else {
                 addr.send(SendCommand.CONNECTION_ACCEPTED)
                 return name to addr
             }

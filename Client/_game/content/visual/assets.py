@@ -2,8 +2,11 @@ import os
 
 import pygame as pg
 
-from _game.config import TABLE_WIDTH, GAME_HEIGHT, MAIN_TABLE_HEIGHT
 from _game.content.ingredient import Ingredient
+
+"""
+    This file contains PyGame Surface (image) instances.
+"""
 
 TITLE_IMAGE = pg.image.load(os.path.join('resources', 'title.png'))
 
@@ -14,11 +17,6 @@ PLAYER2_IMAGE = pg.image.load(os.path.join('resources', 'player2.png'))
 PLAYER_IMAGES = [PLAYER1_IMAGE, PLAYER2_IMAGE]
 
 FOODBOX_IMAGE = pg.image.load(os.path.join('resources', 'foodbox.png'))
-
-SIDE_TABLE_IMAGE = pg.Surface((TABLE_WIDTH, GAME_HEIGHT))
-SIDE_TABLE_IMAGE.fill((120, 100, 0))
-MAIN_TABLE_IMAGE = pg.Surface((TABLE_WIDTH*2, MAIN_TABLE_HEIGHT))
-MAIN_TABLE_IMAGE.fill((120, 100, 0))
 
 INGREDIENT_SIZE = 50
 

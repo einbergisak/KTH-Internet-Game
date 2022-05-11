@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-import pygame as pg
-
 from _game.content.ingredient import Ingredient
 from _game.content.pos import Pos
 
@@ -10,9 +8,5 @@ from _game.content.pos import Pos
 class Player:
     pos: Pos
     name: str
-    orientation: str
-    surface = pg.Surface((50, 50))
+    orientation: str  # Is either "Left" or "Right". Used to render the player according to which direction it's moving.
     carriedIngredient: Ingredient | None
-
-
-    surface.fill((140, 0, 0))

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Tables(
     val left: Table = LEFT_TABLE,
-    val right: Table  = RIGHT_TABLE,
+    val right: Table = RIGHT_TABLE,
     val main: Table = MAIN_TABLE
 ) {
     /**

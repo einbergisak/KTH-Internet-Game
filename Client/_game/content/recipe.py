@@ -9,4 +9,7 @@ class Recipe:
     ingredients: [Ingredient]
 
     def value(self):
+        """
+            Returns the score obtained by completing this recipe.
+        """
         return len(self.ingredients)
