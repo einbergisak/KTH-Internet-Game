@@ -1,18 +1,11 @@
 import pygame as pg
 import pygame_textinput as pgt
 
-from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, HEADER_HEIGHT, \
-    INGREDIENT_FONT_COLOR, RECIPE_FONT_SIZE, INGREDIENT_FONT_SIZE, RECIPE_FONT_COLOR, TIMER_FONT_SIZE, POPUP_FONT_SIZE
+from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_HEIGHT
 from _game.content.visual.assets import PLAYER_IMAGES, FOODBOX_IMAGE, \
-    INGREDIENT_IMAGES, INGREDIENT_SIZE, TITLE_IMAGE, GAME_BACKGROUND_IMAGE
-
-font = pg.font.Font(None, 64)
-
-recipe_name_font = pg.font.Font(None, RECIPE_FONT_SIZE)
-recipe_name_font.set_italic(True)
-ingredient_font = pg.font.Font(None, INGREDIENT_FONT_SIZE)
-timer_font = pg.font.Font(None, TIMER_FONT_SIZE)
-popup_font = pg.font.Font(None, POPUP_FONT_SIZE)
+    INGREDIENT_IMAGES, INGREDIENT_SIZE, TITLE_IMAGE, GAME_BACKGROUND_IMAGE, HEADER_BACKGROUND_COLOR
+from _game.content.visual.font import DEFAULT_FONT, RECIPE_NAME_FONT, INGREDIENT_FONT, TIMER_FONT, POPUP_FONT, \
+    RECIPE_FONT_COLOR, INGREDIENT_FONT_SIZE, INGREDIENT_FONT_COLOR, PLAYER_NAME_FONT, PLAYER_NAME_FONT_COLOR
 
 
 class Graphics:
@@ -21,9 +14,9 @@ class Graphics:
     """
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SCALED)
     pg.display.set_caption("INET")
-    _default_menu_text = font.render(f"Enter your name:", True, (0, 0, 0))
+    _default_menu_text = DEFAULT_FONT.render(f"Enter your name:", True, (0, 0, 0))
     menu_text = _default_menu_text
-    text_input = pgt.TextInputVisualizer(font_object=font)
+    text_input = pgt.TextInputVisualizer(font_object=DEFAULT_FONT)
     text_input.font_color = (237, 125, 49)
     text_input.font_object.set_italic(True)
 
@@ -31,7 +24,7 @@ class Graphics:
         self.game = game
 
     def edit_menu_text(self, text: str):
-        self.menu_text = font.render(text, True, (40, 40, 40))
+        self.menu_text = DEFAULT_FONT.render(text, True, (40, 40, 40))
 
     def draw_menu(self):
         menu_text_x = SCREEN_WIDTH / 4 - self._default_menu_text.get_width() / 4
@@ -65,6 +58,9 @@ class Graphics:
                 ing_pos = x + 28, y + 17
 
             self.screen.blit(player_img, player.pos.as_tuple())
+            name_text = PLAYER_NAME_FONT.render(player.name, True, PLAYER_NAME_FONT_COLOR)
+            name_pos = x+player_img.get_width()/2-name_text.get_width()/2, y - name_text.get_height()
+            self.screen.blit(name_text, name_pos)
 
             if player.carriedIngredient is not None:
                 ing_img = INGREDIENT_IMAGES[player.carriedIngredient]
@@ -80,20 +76,20 @@ class Graphics:
         self.screen.blit(header, (0, 0))
 
         if self.game.state is None:
-            self.screen.blit(recipe_name_font.render("Awaiting server...", True, RECIPE_FONT_COLOR), (30, 30))
+            self.screen.blit(RECIPE_NAME_FONT.render("Awaiting server...", True, RECIPE_FONT_COLOR), (30, 30))
         else:
 
             # Recipes
             for i, recipe in enumerate([self.game.state.recipe1, self.game.state.recipe2]):
-                recipe_name = recipe_name_font.render(recipe.name, True, RECIPE_FONT_COLOR)
-                recipe_score = recipe_name_font.render(f"{recipe.value()}p", True, (255, 0, 30))
+                recipe_name = RECIPE_NAME_FONT.render(recipe.name, True, RECIPE_FONT_COLOR)
+                recipe_score = RECIPE_NAME_FONT.render(f"{recipe.value()}p", True, (255, 0, 30))
                 recipe_pos = recipe_x, recipe_y = (SCREEN_WIDTH / 6 + i * SCREEN_WIDTH / 2, 15)
                 self.screen.blit(recipe_score, (recipe_x - 40, recipe_y))
                 self.screen.blit(recipe_name, recipe_pos)
                 # Recipe ingredient
                 for n, ing in enumerate(recipe.ingredients):
                     ing_pos = ing_x, ing_y = (recipe_x + 10, recipe_y + (n + 1) * INGREDIENT_FONT_SIZE / 1.2 + 5)
-                    self.screen.blit(ingredient_font.render(ing, True, INGREDIENT_FONT_COLOR),
+                    self.screen.blit(INGREDIENT_FONT.render(ing, True, INGREDIENT_FONT_COLOR),
                                      ing_pos)
                     self.screen.blit(pg.transform.smoothscale(INGREDIENT_IMAGES[ing], (17, 17)),
                                      (ing_x - 25, ing_y - 2))
@@ -117,12 +113,12 @@ class Graphics:
                 text = f"{minutes}:{seconds}"
             else:
                 text = f"{minutes}:0{seconds}"
-            timer_text = timer_font.render(text, True, (0, 0, 0))
+            timer_text = TIMER_FONT.render(text, True, (0, 0, 0))
             timer_pos = (SCREEN_WIDTH / 2 - timer_text.get_width() / 2, HEADER_HEIGHT - timer_text.get_height())
             self.screen.blit(timer_text, timer_pos)
 
             # Score
-            score_text = timer_font.render(f"Score: {self.game.state.points} points", True, (0, 0, 0))
+            score_text = TIMER_FONT.render(f"Score: {self.game.state.points} points", True, (0, 0, 0))
             score_pos = (SCREEN_WIDTH / 2 - score_text.get_width() / 2,
                          HEADER_HEIGHT - timer_text.get_height() - score_text.get_height() - 20)
             self.screen.blit(score_text, score_pos)
@@ -141,14 +137,14 @@ class Graphics:
 
     def show_game_over_screen(self):
         x, y = self._draw_popup()
-        text = popup_font.render(f"Game over! Score: {self.game.state.points} points!", True, (200, 200, 200))
+        text = POPUP_FONT.render(f"Game over! Score: {self.game.state.points} points!", True, (200, 200, 200))
         pos = x + 10, y + 30
         self.screen.blit(text, pos)
         pg.display.update()
 
     def show_disconnected_screen(self):
         x, y = self._draw_popup()
-        text = popup_font.render(f"Game aborted due to disconnection.", True, (200, 200, 200))
+        text = POPUP_FONT.render(f"Game aborted due to disconnection.", True, (200, 200, 200))
         pos = x + 10, y + 40
         self.screen.blit(text, pos)
         pg.display.update()
