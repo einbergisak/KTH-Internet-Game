@@ -40,6 +40,8 @@ def parse_player(player: dict, old_player: Player | None):
     player_x, player_y = player["pos"]["x"], player["pos"]["y"] + HEADER_HEIGHT
     player_pos = Pos(player_x, player_y)
 
+    carried_ingredient = player.get("carriedIngredient")
+
     if old_player is None or old_player.pos.x < player_x:
         player_orientation = "Right"
     elif old_player.pos.x > player_x:
@@ -47,7 +49,7 @@ def parse_player(player: dict, old_player: Player | None):
     else:
         player_orientation = old_player.orientation
 
-    return Player(pos=player_pos, name=player["name"], orientation=player_orientation)
+    return Player(pos=player_pos, name=player["name"], orientation=player_orientation, carriedIngredient=carried_ingredient)
 
 
 def parse_players(players: dict, old_players):

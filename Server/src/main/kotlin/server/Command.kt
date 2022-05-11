@@ -10,7 +10,7 @@ interface Command
  *  Commands sent by the client and received by the [Server]
  */
 enum class ReceiveCommand : Command {
-    MOVE, INTERACT_WITH_FOOD_BOX, CONNECTION_REQUEST, DISCONNECTED, STALE, GAME_STARTED
+    MOVE, INTERACT_WITH_FOOD_BOX, CONNECTION_REQUEST, DISCONNECTED, GAME_STARTED
 }
 
 /**

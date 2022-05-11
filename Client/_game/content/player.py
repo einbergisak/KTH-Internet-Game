@@ -12,7 +12,7 @@ class Player:
     name: str
     orientation: str
     surface = pg.Surface((50, 50))
-    carriedIngredient: Ingredient | None = None
+    carriedIngredient: Ingredient | None
 
 
     surface.fill((140, 0, 0))

@@ -55,6 +55,10 @@ def connect(ctx, name: str) -> bool:
         print(f"Received: {cmd}")
         if cmd == ReceiveCommand.CONNECTION_ACCEPTED:
             return True
+        elif cmd == ReceiveCommand.CONNECTION_DENIED:
+            ctx.graphics.edit_menu_text("Connection refused, try again.")
+            ctx.graphics.draw_menu()
+            sleep(1)
     except socket.timeout:
         ctx.graphics.edit_menu_text("Connection timed out, try again.")
         ctx.graphics.draw_menu()
