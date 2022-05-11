@@ -3,136 +3,22 @@ Det spelet går ut på :
 	Spelplan med stort bord i mitten.  Bordet hindrar spelarna från att korsa till den andra sidan.
 	Längst bort från bordet på varje sida finns en massa lådor, ur vilka man kan plocka upp ingredienser.
 
-	Under en spelgång kommer en timer starta och räkna ned, ca 2-3 minuter.
+	Under en spelgång kommer en timer starta och räkna ned.
 	Under denna tid kommer en massa recept att visas längst upp på skärmen, 2 i taget.
 
-	Målet för spelarna är att plocka upp de ingredienser som behövs, och att placera dem på bordet.
+	Målet för spelarna är att plocka upp de ingredienser som behövs, och att placera dem på det mittersta bordet.
 
-	När alla önskade ingredienser är på bordet erhålls ett poäng, och nya recept visas.
+	När alla önskade ingredienser är på bordet erhålls poäng, och nya recept visas.
 	Samtidigt placeras ingredienser ut på nytt i matlådorna, i slumpad ordning.
+
+	När tiden är slut avslutas spelet.
+
+	Spelarna måste samarbeta för att tjäna poäng, då ingredienserna för varje recept finns utspridda på båda sidor av spelplanen.
 
 
 Recept/Ingredienser:
-	Varje recept måste bestå av minst 2 ingredienser.
-	Alla ingredienser för ett recept får inte finnas på samma sida av bordet, utan det ska vara jämnt fördelat.
-	De 2 recept som visas måste dela åtminstone 1 ingrediens.
+	Alla ingredienser för ett recept får inte finnas på samma sida av bordet, utan det ska vara jämnt fördelat. Detta för att påtvinga samarbete mellan de två spelarna. Poäng kan inte uppnås utan att gemensamt hämta ingredienser till ett recept.
+
 	Recept ger 1 poäng för varje ingrediens.
-	Ingredienser kan endast plockas upp från och lämnas i matlådor, eller på en motsvarande ruta på bordet
 
-
-Kodimplementation:
-
-	data class Pos(x, y)
-
-	typealias Rect = Pair<Pos, Pos>
-
-
-
-	Player:
-		id: int // 0 för left, 1 för right
-		pos: Pos
-		carriedIngredient: Ingredient?
-
-	FoodBox:
-		pos: Pos
-		containedIngredient: Ingredient?
-
-
-	Recipe:
-		name: String
-		ingredients: [Ingredient]
-		value: Int = ingredients.length
-
-	Ingredient: Enum med typer för varje sorts ingrediens i spelet.
-
-	Update():
-		collission checking
-		utföra spelares action
-		kolla om receptet är färdigt.
-
-	GameState:
-		gameLevel: GameLevel
-		gameStartTime: TimeMark
-		players: Pair<Player, Player>
-		currentRecipes: Pair<Recipe, Recipe>
-		remainingRecipes: [Recipe]
-		pointsEarned: int
-
-	SendState:
-		timeRemaining: Duration = GAME_TIME - gameStartTime.elapsed()
-		players
-		currentRecipes
-		foodBoxes
-		pointsEarned
-
-
-	GameLevel:
-		gameBounds: Rect
-		table: Rect
-		foodBoxes: [FoodBoxes] // init alla har ingredient Null
-
-	Server:
-		player1: Socket
-		player2: Socket
-		level: GameLevel
-		state: GameState
-
-
-	konstanter:
-		MIN_Y = 0
-		MAX_Y = 500
-		MIN_X = 0
-		MAX_X = 1000
-		PLAYER_VEL = 2
-		FOODBOX_SIZE = 50
-		TABLE: Rect = (400, MIN_Y) to (600, MAX_Y)
-
-
-	Command: Enum
-		LEFT, UP, DOWN, RIGHT, INTERACT_WITH_FOOD_BOX
-
-
-	commands:
-
-		interactWithFoodBox(player):
-			for box in boxes
-				if (playerXmax == boxXmin || playerXmin == boxXmax) && playerYmid.within(boxYmin till boxYmax):
-					if player.carriedIngredient.exists(): // Put
-						if !box.containedIngredient.exists():
-							box.containedIngredient = player.carriedIngredient.take()
-					else: // Take
-						if box.containedIngredient.exists():
-							player.carriedIngredient = box.containedIngredient.take()
-
-
-		move(direction):
-			if direction is UP:
-				player.y -= PLAYER_VEL
-				if player.y < MIN_Y:
-					player.y = MIN_Y
-				if player.y.within(player2bounds):
-					player.y = player2.maxy+1
-
-			sen samma sak för andra riktningar
-
-
-
-
-Protokoll:
-	All data serialiseras till JSON och skickas via sockets.
-	I main menu anger man IP till server.
-
-	Server väntar på anslutning av två connections.
-	Ger första anslutningen ID 0 (left) och den andra ID 1 (right)
-	Inledningsvis skickas gameLevel.
-	Under spelets gång genereras och skickas SendState till varje spelare varje tick.
-	Varje tick tar servern också emot kommandon av spelare.
-
-	Spelare har 3 states: DISCONNECTED, CONNECTING, CONNECTED
-	client CONNECTING -> (CONNECTION_ACCEPTED->CONNECTED, CONNECTION_DENIED->DISCONNECTED)
-
-	Spelare försöker ansluta med header CONNECTION_REQUEST.
-	När servern får en CONNECTION_REQUEST svarar den med en CONNECTION_DENIED eller CONNECTION_ACCEPTED, där den senare skickas med ett package innehållande dess ID. Om båda platser är fyllda skickas CONNECTION_DENIED
-
-	Om servern inte får ett package av en client på N sekunder räknas den som DC:ad, och pausar då spelet i N sekunder och inväntar att spelaren (med samma IP+port) ska reconnecta. Efter N sekunder utan reconnection så avbryts spelet.
-	På samma sätt byter spelaren state till DISCONNECTED om den inte får package från servern på N sekunder.
+	Ingredienser kan endast plockas upp från och lämnas i matlådor.

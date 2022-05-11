@@ -1,0 +1,56 @@
+
+
+Varje packet skickas som UTF8-sträng i JSON-format mellan klienten och servern, mer specifikt i formatet:
+{"type":Command, "data":String}
+
+Den enda "data" som klienten skickar är först spelarens namn vid en CONNECTION_REQUEST, samt riktning (någon av UP, DOWN, LEFT eller RIGHT) vid MOVE.
+
+Den enda "data" som servern skickar till klienten är tillsammans med UPDATE_STATE, då den skickar speldatan serialiserat till JSON enligt formatet som visas i state_format.json.
+
+Felaktig data skapar exception inuti ett "try-catch"-uttryck i klienten och servern. Servern ignorerar all felaktig data, och klienten ignorerar också felaktig data men visar i vissa fall vad som gått fel för användaren utan att krascha programmet.
+
+
+
+Kommandon från servern till klienten:
+    CONNECTION_DENIED, CONNECTION_ACCEPTED, START_GAME, GAME_ABORTED, GAME_OVER, UPDATE_STATE
+
+Kommandon från klienten till servern:
+    MOVE, INTERACT_WITH_FOOD_BOX, CONNECTION_REQUEST, DISCONNECTED, GAME_STARTED
+
+
+
+Servern har definierade tillstånd i form av en enum-variabel:
+    PRE_GAME ->
+        Lyssna på inkommande CONNECTION_REQUEST med NAME-data i form av en sträng. När spelare accepteras får de CONNECTION_ACCEPTED. Spelare nekas om deras Package inte hör till protokollet.
+        När båda är anslutna skickar servern START_GAME till klienterna, inväntar GAME_STARTED från klienterna, och därefter startas spelet och övergår till IN_GAME.
+
+    IN_GAME ->
+        Servern skickar sitt uppdaterade STATE till klienterna varje tick.
+
+        Ser till så att varje spelare kontinuerligt skickar ny data. Om inte -> övergå till GAME_ABORTED.
+
+        Hantera packages från spelare ->
+            MOVE: Kalla move(direction) med direction som anges som "data" i packaget. Är antingen
+            INTERACT_WITH_FOOD_BOX: Kalla Player.interactWithFoodBox().
+            CONNECTION_REQUEST: Svara med CONNECTION_DENIED, eftersom spelet redan är igång.
+            DISCONNECTED: Övergå till Status.GAME_ABORTED, och meddela den andra spelaren att SendCommand.GAME_ABORTED.
+
+            När ett package är mottaget, uppdatera clientens timeOfLastpackage, så de inte anses som frånkopplade.
+
+        När den återstående tiden är 0 sekunder -> skicka GAME_OVER till båda spelarna och övergå till GAME_OVER
+
+    GAME_OVER ->
+        Meddela båda spelarna att GAME_OVER, avslutar båda anslutningarna, och resettar gameState. Övergår till PRE_GAME.
+
+    GAME_ABORTED ->
+        Meddela båda spelarna att GAME_ABORTED, avslutar båda anslutningarna och resettar gameState. Övergår till PRE_GAME.
+
+Klientens tillstånd:
+    När spelaren har angett sitt namn i huvudmenyn skickar den en CONNECTION_REQUEST till servern. Om den godkänns med CONNECTION_ACCEPTED från servern så inväntar den sedan START_GAME från servern, och skickar sedan GAME_STARTED när den har mottagit det. Klienten börjar därefter rendera spelplanen enligt dess angivna framerate.
+
+    Under spelets gång lyssnar klienten på UPDATE_STATE från servern, som beskriver spelplanen, och även på GAME_ABORTED eller GAME_OVER vilka båda avslutar spelet, men den senare visar slutgiltig poäng.
+    Spelaren skickar även MOVE och INTERACT_WITH_FOOD_BOX till servern när motsvarande knappar har blivit nedtryckta.
+
+    Om klienten inte får ett meddelande av servern på några sekunder så ser den sig som frånkopplad och avslutar då spelet.
+
+    Om klienten avslutar spelet genom att trycka på ESC-knappen så skickar den DISCONNECTED till servern och avslutar spelet.

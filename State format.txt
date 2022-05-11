@@ -1,0 +1,305 @@
+
+JSON-format med beskrivningar till höger om varje keys första förekomst.
+
+Beskrivningar är den del av varje raden som ligger till höger om bindestreck (-).
+
+
+
+{
+    "players": { - Spelets två spelare
+        "first": { - Den första spelaren
+            "id": 1, - Spelarens id, "1" för första spelaren "2" för andra spelaren.
+            "name": "Namn 1", - Dess namn
+            "pos": { - Dess position
+                "x": 200, - x-koordinat
+                "y": 349 - y-koordinat
+            },
+            "carriedIngredient": null - Ingrediens som bärs av spelaren. Kan vara någon av {Bacon, Egg, Milk, Flour, Cheese, Cream, Pasta, BakingPowder, Sugar, Butter, Salt, Pepper, Onion, Potato, Basil, Nuts, Oil, Tomato, Garlic, Parsley, ChiliPepper} eller "null"
+        },
+        "second": { - Den andra spelaren
+            "id": 2,
+            "name": "Namn 2",
+            "pos": {
+                "x": 880,
+                "y": 369
+            },
+            "carriedIngredient": null
+        }
+    },
+    "currentRecipes": { - Spelets aktuella recept.
+        "first": { - Det första receptet
+            "name": "Omelette",
+            "ingredients": [ - Lista över receptets ingredienser. Kan innehålla {Bacon, Egg, Milk, Flour, Cheese, Cream, Pasta, BakingPowder, Sugar, Butter, Salt, Pepper, Onion, Potato, Basil, Nuts, Oil, Tomato, Garlic, Parsley, ChiliPepper}
+                "Egg",
+                "Salt",
+                "Pepper"
+            ]
+        },
+        "second": { - Det andra receptet
+            "name": "Pasta Carbonara",
+            "ingredients": [
+                "Pasta",
+                "Bacon",
+                "Egg",
+                "Cheese",
+                "Cream",
+                "Salt",
+                "Pepper"
+            ]
+        }
+    },
+    "gameLevel": { - Spelplanen
+        "gameBounds": { - Det område som spelet ockuperar.
+            "topleft": { - Övre vänstra hörnet
+                "x": 0,
+                "y": 0
+            },
+            "botright": { - Nedre högra hörnet
+                "x": 1199,
+                "y": 699
+            }
+        },
+        "tables": { - De tre bord som finns i spelet
+            "left": { - Det vänstra bordet
+                "bounds": { - Den spelyta som ockuperas.
+                    "topleft": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "botright": {
+                        "x": 99,
+                        "y": 699
+                    }
+                },
+                "foodBoxes": [ - En lista av de matlådor/FoodBoxes som bordet har.
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "containedIngredient": "Cream" - Den ingrediens som finns i lådan. Kan vara antingen {Bacon, Egg, Milk, Flour, Cheese, Cream, Pasta, BakingPowder, Sugar, Butter, Salt, Pepper, Onion, Potato, Basil, Nuts, Oil, Tomato, Garlic, Parsley, ChiliPepper} eller "null".
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 100
+                        },
+                        "containedIngredient": "Salt"
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 200
+                        },
+                        "containedIngredient": "Tomato"
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 300
+                        },
+                        "containedIngredient": "Flour"
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 400
+                        },
+                        "containedIngredient": "Egg"
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 500
+                        },
+                        "containedIngredient": "Butter"
+                    },
+                    {
+                        "pos": {
+                            "x": 0,
+                            "y": 600
+                        },
+                        "containedIngredient": "Bacon"
+                    }
+                ]
+            },
+            "right": { - Det högra bordet.
+                "bounds": {
+                    "topleft": {
+                        "x": 1100,
+                        "y": 0
+                    },
+                    "botright": {
+                        "x": 1199,
+                        "y": 699
+                    }
+                },
+                "foodBoxes": [
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 0
+                        },
+                        "containedIngredient": "Garlic"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 100
+                        },
+                        "containedIngredient": "Basil"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 200
+                        },
+                        "containedIngredient": "Pasta"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 300
+                        },
+                        "containedIngredient": "Parsley"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 400
+                        },
+                        "containedIngredient": "Pepper"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 500
+                        },
+                        "containedIngredient": "Nuts"
+                    },
+                    {
+                        "pos": {
+                            "x": 1100,
+                            "y": 600
+                        },
+                        "containedIngredient": "Cheese"
+                    }
+                ]
+            },
+            "main": { - Det mittersta huvudbordet.
+                "bounds": {
+                    "topleft": {
+                        "x": 499,
+                        "y": 0
+                    },
+                    "botright": {
+                        "x": 698,
+                        "y": 699
+                    }
+                },
+                "foodBoxes": [
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 0
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 100
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 200
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 300
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 400
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 500
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 499,
+                            "y": 600
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 0
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 100
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 200
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 300
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 400
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 500
+                        },
+                        "containedIngredient": null
+                    },
+                    {
+                        "pos": {
+                            "x": 599,
+                            "y": 600
+                        },
+                        "containedIngredient": null
+                    }
+                ]
+            }
+        }
+    },
+    "pointsEarned": 7, - Antal poäng som hittills samlats av spelarna.
+    "timeRemaining": 55 - Återstående tid, angivet i sekunder.
+}
