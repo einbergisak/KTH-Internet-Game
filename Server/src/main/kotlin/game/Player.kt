@@ -27,7 +27,6 @@ data class Player(
      *  pick up or drop an [Ingredient] depending on occupation of [Player.carriedIngredient] and [FoodBox.containedIngredient]
      */
     fun interactWithFoodBox() {
-        // TODO: 2022-04-28 Kolla om getAll() funkar bra
         for (table in Server.gameState.gameLevel.tables.getAll()) {
             for (box in table.foodBoxes) {
                 // If the player is adjacent to a FoodBox in the x-direction, and its y-axis midpoint intersects the FoodBox in the x-direction

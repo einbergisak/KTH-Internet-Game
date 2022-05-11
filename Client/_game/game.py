@@ -4,10 +4,10 @@ import pygame as pg
 
 from _communication import communication
 from _communication.command import ReceiveCommand, SendCommand
-from _game.game_state import GameState
-from _game.content.visual.graphics import Graphics
 from _communication.io_thread import IOThread
 from _communication.packet import Packet
+from _game.content.visual.graphics import Graphics
+from _game.game_state import GameState
 
 
 def handle_input() -> bool:
@@ -88,7 +88,6 @@ class Game:
         done = False
         while not done:
             if not thread.is_alive():
-                print("thread dead")
                 break
 
             handle_input()

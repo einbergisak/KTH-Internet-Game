@@ -1,11 +1,10 @@
 import pygame as pg
 import pygame_textinput as pgt
 
+from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, HEADER_HEIGHT, \
+    INGREDIENT_COLOR, RECIPE_FONT_SIZE, INGREDIENT_TEXT_SIZE, RECIPE_COLOR, TIMER_FONT_SIZE, POPUP_FONT_SIZE
 from _game.content.visual.assets import SIDE_TABLE_IMAGE, MAIN_TABLE_IMAGE, PLAYER_IMAGES, FOODBOX_IMAGE, \
     INGREDIENT_IMAGES, INGREDIENT_SIZE, TITLE_IMAGE, GAME_BACKGROUND_IMAGE
-from _game.config import SCREEN_WIDTH, SCREEN_HEIGHT, HEADER_BACKGROUND_COLOR, HEADER_HEIGHT, \
-    INGREDIENT_COLOR, RECIPE_FONT_SIZE, INGREDIENT_TEXT_SIZE, RECIPE_COLOR, TABLE_WIDTH, \
-    TIMER_FONT_SIZE, POPUP_FONT_SIZE
 
 font = pg.font.Font(None, 64)
 
@@ -131,22 +130,22 @@ class Graphics:
         pg.display.update()
 
     def _draw_popup(self):
-        popup = pg.Surface((400, 100))
-        popup.fill((80, 80, 80))
+        popup = pg.Surface((500, 100))
+        popup.fill((119, 54, 25))
         pos = (SCREEN_WIDTH / 2 - popup.get_width() / 2, SCREEN_HEIGHT / 2 - popup.get_height() / 2)
         self.screen.blit(popup, pos)
         return pos
 
     def show_game_over_screen(self):
         x, y = self._draw_popup()
-        text = popup_font.render(f"Game over! Score: {self.game.state.points}", True, (200, 200, 200))
+        text = popup_font.render(f"Game over! Score: {self.game.state.points} points!", True, (200, 200, 200))
         pos = x + 10, y + 30
         self.screen.blit(text, pos)
         pg.display.update()
 
     def show_disconnected_screen(self):
         x, y = self._draw_popup()
-        text = popup_font.render(f"Player disconnected, game aborted.", True, (200, 200, 200))
-        pos = x + 10, y + 30
+        text = popup_font.render(f"Game aborted due to disconnection.", True, (200, 200, 200))
+        pos = x + 10, y + 40
         self.screen.blit(text, pos)
         pg.display.update()

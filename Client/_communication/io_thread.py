@@ -1,5 +1,4 @@
 import threading
-from asyncio import sleep
 
 import _communication.communication as comm
 from _communication.command import ReceiveCommand
@@ -31,6 +30,7 @@ class IOThread(threading.Thread):
                     self.game.game_disconnect()
                     return
             except TimeoutError:
+                self.game.game_disconnect()
                 return
             except Exception:
                 continue

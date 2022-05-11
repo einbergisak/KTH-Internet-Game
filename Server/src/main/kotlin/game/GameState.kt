@@ -57,7 +57,7 @@ class GameState(val gameLevel: GameLevel, val players: Pair<Player, Player>) {
 
         // Fill remaining FoodBoxes with ingredients that are not in any of the current recipes, in shuffled order
         val ingredientsNotInRecipes =
-            Ingredient.values().asList().minus(ing1.union(ing2)).shuffled().toMutableList()
+            Ingredient.values().asList().minus(putOnLeftSide.union(putOnRightSide)).shuffled().toMutableList()
         val emptyBoxesLeft = FOODBOXES_PER_TABLE - putOnLeftSide.size
         val emptyBoxesRight = FOODBOXES_PER_TABLE - putOnRightSide.size
         repeat(emptyBoxesLeft) {

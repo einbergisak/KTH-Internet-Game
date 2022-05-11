@@ -34,10 +34,7 @@ data class Connection(var address: SocketAddress, var player: Player, var timeOf
                     sendBothPlayers(SendCommand.GAME_ABORTED)
                     Server.gameState.status = Status.ABORTED
                 }
-                else -> {
-                    // TODO: 2022-05-03 remove debug print
-                    println("Invalid command: $cmd with data: $data")
-                }
+                else -> {}
             }
         } catch (e: SerializationException) {
             /* no-op */
@@ -116,10 +113,11 @@ fun connectPlayers(): Pair<Player, Player> {
     val (name1, addr1) = newConnection()
     val (name2, addr2) = newConnection()
 
-    // TODO: 2022-05-03 Kolla hur referenserna samspelar
-    Server.connections.player1 = Connection(addr1, Player(1, name1))
-    Server.connections.player2 = Connection(addr2, Player(2, name2))
-    return Player(1, name1) to Player(2, name2)
+    val p1 = Player(1, name1)
+    val p2 = Player(2, name2)
+    Server.connections.player1 = Connection(addr1, p1)
+    Server.connections.player2 = Connection(addr2, p2)
+    return p1 to p2
 }
 
 /**
